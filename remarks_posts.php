@@ -58,7 +58,7 @@ function populatePostMatrix(){
     foreach($commented_posts as $eachPost){
       $getUncommentedPostsQuery = $getUncommentedPostsQuery." AND $wpdb->posts.ID != ".$eachPost['post_ID'];
       addPostMatrixRow($eachPost['post_ID'], $eachPost['post_title'], $eachPost['guid'], $eachPost['post_author'], $eachPost['author_name'], $eachPost['count'] );
-      remarks_handle_biggest_source($remarks_posts_top['label'], $remarks_posts_top['count'], $eachPost['post_title'], $eachPost['count']);
+      RemarksSegment::remarks_handle_biggest_source($remarks_posts_top['label'], $remarks_posts_top['count'], $eachPost['post_title'], $eachPost['count']);
     }
   }
 

@@ -190,4 +190,14 @@ function InitChart() {
         echo '<br/>';
         echo '</div>';
     }
+
+    public static function remarks_handle_biggest_source(&$biggestName, &$biggestNumber, $candidateName, $candidateNumber)
+     {
+        if($biggestNumber < $candidateNumber){
+          $biggestName = $candidateName;
+          $biggestNumber = $candidateNumber;
+        } elseif($biggestNumber == $candidateNumber) {
+          $biggestName = $biggestName.', '.$candidateName;
+        }
+     }
 }

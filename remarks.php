@@ -26,7 +26,7 @@
 */
 
 include dirname(__FILE__)."/remarks_globals.php";
-include dirname(__FILE__)."/remarks_pieces.php";
+//include dirname(__FILE__)."/remarks_pieces.php";
 include dirname(__FILE__)."/remarks_posts.php";
 include dirname(__FILE__)."/remarks_segment.php";
 include dirname(__FILE__)."/remarks_overview.php";

@@ -1,6 +1,6 @@
 <?php
 
-class RemarksGlobe {
+class RemarksGlobe { // For common functionality, although there isn't much.
 
   private $longlats;
   private $countries;
@@ -162,7 +162,7 @@ function populateCityByComments(){
     // 2. for each comment, divide the IP address into the city and country
     foreach ($countryDetails as $eachCountry){
       $this->countries[$eachCountry['COUNTRY']] = $eachCountry['COUNT'];
-      remarks_handle_biggest_source($this->countries_top['label'], $this->countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT']);
+      RemarksSegment::remarks_handle_biggest_source($this->countries_top['label'], $this->countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT']);
     }
     
     foreach ($commentDetails as $eachComment){
