@@ -10,6 +10,12 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 
 // TODO add google API fallthrough
 
+  public function __construct() {
+    $this->longlats = array();
+    $this->countries = array();
+    $this->countries_top = array();
+  }
+
 function addLongLatsToMatrix($long, $lat){
 	
 	if (array_key_exists($long, $this->longlats)){

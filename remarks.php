@@ -26,7 +26,6 @@
 */
 
 include dirname(__FILE__)."/remarks_globals.php";
-//include dirname(__FILE__)."/remarks_pieces.php";
 include dirname(__FILE__)."/remarks_posts.php";
 include dirname(__FILE__)."/remarks_segment.php";
 include dirname(__FILE__)."/remarks_overview.php";
@@ -75,7 +74,6 @@ function comment_changes($commentID, $status){
 
 function remarks_main(){
     global $wpdb;
-    global $remarks_total_comments;
     global $remarks_posts;
 
     populatePostMatrix();
@@ -98,11 +96,9 @@ function remarks_main(){
     $remarksCategories = new RemarksCategories($remarks_posts);
     $remarksAuthors = new RemarksAuthors();    
 
-    if ($remarks_total_comments > 0){
-       include dirname(__FILE__)."/remarks_navigation_render.php";
-    } else {
-       include dirname(__FILE__)."/remarks_navigation_nocomments_render.php";
-    }
+    $interface = new RemarksInterface();
+    $interface->renderInterface($remarks_total_comments);
+
     echo "<div id='display'>";
        $remarksOverview = new RemarksOverview($remarks_total_comments, $remarksCategories->getHighestStat(), $remarksAuthors->getHighestStat());
        $remarksOverview->render();

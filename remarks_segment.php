@@ -180,7 +180,7 @@ function InitChart() {
      
     public function render(){
         echo "<div id='" . $this->segmentType . "_div' class='startHidden'>";
-        remarks_renderNavigationOptions($this->segmentType);
+        RemarksInterface::remarks_renderNavigationOptions($this->segmentType);
         echo "<br/>";
         $this->renderMatrix();
         echo '<br/>';
