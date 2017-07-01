@@ -3,6 +3,8 @@
 class RemarksGlobe {
 
   private $longlats;
+  private $countries;
+  private $countries_top;
 
 // TODO add common city list
 
@@ -28,8 +30,7 @@ function stripCountry($raw_country){
 }
 
 function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitude, $longitude){
-    global $remarks_countries;
-    global $wpdb;
+  global $wpdb;
 
 	$sql = "INSERT INTO `" . $wpdb->prefix . "remarks_comments` VALUES ($commentID".', \''.$city.'\', \''.$country.'\', '.$latitude.', '.$longitude.')';
 	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -42,15 +43,14 @@ function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitud
 }
 
 function Geolocation_RegisterCountry($country){
-     global $remarks_countries;
 
     // 3. see if that city and country exists
-    if (array_key_exists($country, $remarks_countries)){
+    if (array_key_exists($country, $this->countries)){
         // 3b. otherwise increase that city and country's value by 1
-	$remarks_countries[$country] ++;
+	$this->countries[$country] ++;
     } else {
         // 3a. if that city and country doesn't exist, create a key in an array for that city and country, and set its number to 1
-	$remarks_countries[$country] = 1;
+	$this->countries[$country] = 1;
     }
 }
 
@@ -150,8 +150,6 @@ function updateTableRecords(){
 
 function populateCityByComments(){
     global $wpdb;
-    global $remarks_countries;
-    global $remarks_countries_top;
 
     // 0. retrieve the data
     $retrieveComments = "SELECT * FROM `" . $wpdb->prefix . "remarks_comments` WHERE 1";
@@ -163,8 +161,8 @@ function populateCityByComments(){
     
     // 2. for each comment, divide the IP address into the city and country
     foreach ($countryDetails as $eachCountry){
-      $remarks_countries[$eachCountry['COUNTRY']] = $eachCountry['COUNT'];
-      remarks_handle_biggest_source($remarks_countries_top['label'], $remarks_countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT']);
+      $this->countries[$eachCountry['COUNTRY']] = $eachCountry['COUNT'];
+      remarks_handle_biggest_source($this->countries_top['label'], $this->countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT']);
     }
     
     foreach ($commentDetails as $eachComment){
@@ -173,20 +171,17 @@ function populateCityByComments(){
 	}
     }
     
-    // uncomment this
     $this->updateTableRecords();
     // 4. order by count
-    arsort($remarks_countries);
+    arsort($this->countries);
 }
 
 
 function renderGeolocationCommentsTable(){
-    global $remarks_countries;
-    
     // draw a table of each city by the number of comments it has
 	echo "<table id='geolocate_table'>\n";
     	echo "\t<tr><td><strong>Location</strong></a></td><td><strong>Number of Comments</strong></td></tr>\n";
-        foreach($remarks_countries as $countryKey => $eachCountry){
+        foreach($this->countries as $countryKey => $eachCountry){
 		echo "\t<tr><td>$countryKey</td><td align='center'>$eachCountry</td></tr>\n";
 	}
 	echo "\n</table>\n";

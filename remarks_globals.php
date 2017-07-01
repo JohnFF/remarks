@@ -10,14 +10,6 @@ global $remarks_posts;
 global $remarks_posts_top;
   $remarks_posts_top = array();	
 	
-// countries	
-	
-global $remarks_countries;
-	$remarks_countries = array();
-	
-global $remarks_countries_top;
-	$remarks_countries_top = array();
-	
 // buttons	
 	
 global $buttons_List;

@@ -15,8 +15,8 @@ class RemarksSegment {
   
     protected $segmentType;
     protected $segmentData;
-    protected $mostPopular;
-    protected $highestNumber;
+    protected $mostPopular; // TODO - needed? Only used by Author
+    protected $highestNumber; // TODO - needed? Only used by Author
   
     protected function __construct($classType){
         $this->segmentType = $classType;
