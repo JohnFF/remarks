@@ -79,7 +79,9 @@ function remarks_main(){
     global $remarks_posts;
 
     populatePostMatrix();
-    populateCityByComments();
+
+    $globe = new RemarksGlobe();
+    $globe->populateCityByComments();
     
     $wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
@@ -114,7 +116,7 @@ function remarks_main(){
 
     $remarksAuthors->render();
 
-    include dirname(__FILE__)."/remarks_globe_render.php";
+    $globe->render();
 
     include dirname(__FILE__)."/remarks_about.html";
 
@@ -122,6 +124,6 @@ function remarks_main(){
 
     echo "<br/><br/>";
 
-    globe_Initialise();
+    $globe->globe_Initialise();
 }
 ?>

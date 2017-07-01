@@ -1,22 +1,25 @@
 <?php
 
+class RemarksGlobe {
+
+  private $longlats;
+
 // TODO add common city list
 
 // TODO add google API fallthrough
 
 function addLongLatsToMatrix($long, $lat){
-	global $remarks_longlats;
 	
-	if (array_key_exists($long, $remarks_longlats)){
-		if (array_key_exists($lat, $remarks_longlats[$long])){
-			$remarks_longlats[$long][$lat]++;
+	if (array_key_exists($long, $this->longlats)){
+		if (array_key_exists($lat, $this->longlats[$long])){
+			$this->longlats[$long][$lat]++;
 			RETURN -1;
 		}
 	}
 	
 	// fallthrough
 	
-	$remarks_longlats[$long]= array($lat => 1);
+	$this->longlats[$long]= array($lat => 1);
 }
 
 
@@ -25,10 +28,7 @@ function stripCountry($raw_country){
 }
 
 function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitude, $longitude){
-    global $wpdb;
-
     global $remarks_countries;
-	global $remarks_longlats;
     global $wpdb;
 
 	$sql = "INSERT INTO `" . $wpdb->prefix . "remarks_comments` VALUES ($commentID".', \''.$city.'\', \''.$country.'\', '.$latitude.', '.$longitude.')';
@@ -55,7 +55,6 @@ function Geolocation_RegisterCountry($country){
 }
 
 function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
-	global $remarks_longlats;
     
     // thanks Dan Grossman of Stack Overflow!
     $response = file("http://api.hostip.info/get_html.php?ip=$eachIP&position=true");
@@ -75,19 +74,19 @@ function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
 	    }
     }
     
-    $strippedCountry = stripCountry($result['Country']);
+    $strippedCountry = $this->stripCountry($result['Country']);
     
-    Geolocation_RegisterCountry($strippedCountry);
+    $this->Geolocation_RegisterCountry($strippedCountry);
     
      // 5. add any longlats to the longlatlist
   if (array_key_exists('Longitude', $result) && array_key_exists('Latitude', $result)){ // 5a. use the ones from hpinfo
-      Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], $result['Latitude'], $result['Longitude']);
+      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], $result['Latitude'], $result['Longitude']);
 
 	} elseif(array_key_exists('City', $result) && array_key_exists('Country', $result)){
-      Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], 0.0, 0.0);
+      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], 0.0, 0.0);
 		
 	} elseif(array_key_exists('Country', $result)){
-      Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, "?", 0.0, 0.0);
+      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, "?", 0.0, 0.0);
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($sql);
     }
@@ -103,7 +102,7 @@ function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
      $latitude = $responseArray['8'];
      $longitude = $responseArray['9'];
      
-     Geolocation_RegisterCountry($country);
+     $this->Geolocation_RegisterCountry($country);
      
      Geolocation_InsertCommentLocation($commentIndex, $country, $city, $latitude, $longitude);
 }
@@ -144,7 +143,7 @@ function updateTableRecords(){
 
     foreach ($uninterpretedComments as $eachComment){
 	/*IPtoLocationEntry_HostIP($eachComment['comment_ID'], $eachComment['comment_author_IP']);*/
-	IPtoLocationEntry_FreeGeoIp($eachComment['comment_ID'], $eachComment['comment_author_IP']);
+	$this->IPtoLocationEntry_FreeGeoIp($eachComment['comment_ID'], $eachComment['comment_author_IP']);
     }
 
 }
@@ -170,12 +169,12 @@ function populateCityByComments(){
     
     foreach ($commentDetails as $eachComment){
     	if (($eachComment['longitude'] > 0 || $eachComment['longitude'] < 0) && ($eachComment['latitude'] > 0 || $eachComment['latitude'] < 0)){
-		addLongLatsToMatrix($eachComment['longitude'], $eachComment['latitude']);
+		$this->addLongLatsToMatrix($eachComment['longitude'], $eachComment['latitude']);
 	}
     }
     
     // uncomment this
-    updateTableRecords();
+    $this->updateTableRecords();
     // 4. order by count
     arsort($remarks_countries);
 }
@@ -195,11 +194,10 @@ function renderGeolocationCommentsTable(){
 }
 
 function renderMapByComments(){
-    global $remarks_longlats;
     
    // draw a map
     echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
-	foreach($remarks_longlats as $long => $pair){
+	foreach($this->longlats as $long => $pair){
 		foreach($pair as $lat => $count){
 			echo "&markers=color:blue|label:$count|$lat,$long";
 		}
@@ -227,6 +225,24 @@ function globe_Initialise(){
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 dbDelta($sql);
+
+}
+
+function render () {
+echo "<div id='geolocate_div' class='startHidden'>
+    <div id='geolocate_table_div'>";
+      $this->renderGeolocationCommentsTable();
+echo "</div>
+    <div id='geolocate_map_div'>";
+      $this->renderMapByComments();
+echo "</div><br/>
+<em>Geolocation powered by <a href='http://www.freegeoip.net/'>FreeGeoIP</a>.</em><br/>
+<em>Map powered by <a href='http://lmgtfy.com/?q=google+map+api'>Google Map API</a>.</em><br/>
+<em>Unfortunately, the above map may be missing the locations of some of your comments. This is because sometimes it's impossible to translate the IP address into a geographic location.</em>
+</div>";
+
+
+}
 
 }
 ?>
