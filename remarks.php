@@ -76,41 +76,37 @@ function remarks_main(){
 
     $wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
+    // Get the total number of approved comments.
     $getApprovedCommentCountQuery = "SELECT count(comment_approved) comments_count FROM $wpdb->comments where comment_approved = '1' group by comment_approved";
-
     $query_results = $wpdb->get_row($getApprovedCommentCountQuery, ARRAY_A);
-
     if($query_results != FALSE){
-      $remarks_total_comments = $query_results['comments_count'];
+      $totalApprovedComments = $query_results['comments_count'];
     } else {
-      $remarks_total_comments = 0;
+      $totalApprovedComments = 0;
     }
 
-    $posts = new RemarksPosts();
-    $remarksCategories = new RemarksCategories($posts->getPosts());
-    $remarksAuthors = new RemarksAuthors($posts->getPosts());
-    $globe = new RemarksGlobe();
-
-    $interface = new RemarksInterface($remarks_total_comments);
-    $interface->renderInterface();
-
-    echo "<div id='display'>";
-    $remarksOverview = new RemarksOverview(
-      $remarks_total_comments,
-      $posts->getHighestStat(),
-      $remarksCategories->getHighestStat(),
-      $remarksAuthors->getHighestStat(),
-      $globe->getHighestStat()
+    // Create the section objects.
+    $postsSection = new RemarksPosts();
+    $categoriesSection = new RemarksCategories($postsSection->getPosts());
+    $authorsSection = new RemarksAuthors($postsSection->getPosts());
+    $globeSection = new RemarksGlobe();
+    $interfaceSection = new RemarksInterface($totalApprovedComments);
+    $overviewSection = new RemarksOverview(
+      $totalApprovedComments,
+      $postsSection->getHighestStat(),
+      $categoriesSection->getHighestStat(),
+      $authorsSection->getHighestStat(),
+      $globeSection->getHighestStat()
     );
-    $remarksOverview->render();
 
-    $posts->renderPostMatrix();
-     
-    $remarksCategories->render();
-
-    $remarksAuthors->render();
-
-    $globe->render();
+    // Start rendering.
+    $interfaceSection->renderInterface();
+    echo "<div id='display'>";
+    $overviewSection->render();
+    $postsSection->render();
+    $categoriesSection->render();
+    $authorsSection->render();
+    $globeSection->render();
 
     include dirname(__FILE__)."/remarks_about.html";
 
