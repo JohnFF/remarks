@@ -96,8 +96,8 @@ function remarks_main(){
     $remarksCategories = new RemarksCategories($remarks_posts);
     $remarksAuthors = new RemarksAuthors();    
 
-    $interface = new RemarksInterface();
-    $interface->renderInterface($remarks_total_comments);
+    $interface = new RemarksInterface($remarks_total_comments);
+    $interface->renderInterface();
 
     echo "<div id='display'>";
        $remarksOverview = new RemarksOverview($remarks_total_comments, $remarksCategories->getHighestStat(), $remarksAuthors->getHighestStat());

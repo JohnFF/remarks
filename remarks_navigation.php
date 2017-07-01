@@ -1,26 +1,36 @@
 <?php
 
 class RemarksInterface {
+  private $buttonsList;
+  private $totalComments;
+
+  public function __construct($remarks_total_comments) {
+    $this->buttonsList = array();
+    $this->totalComments = $remarks_total_comments;
+        if ($remarks_total_comments > 0){
+          $this->populateButtonsList();
+        } else {
+      $this->buttonsList[] = $this->remarks_addButtonEntry('overview', '<h4>Overview</h4>', 3, false, true);
+      $this->buttonsList[] = $this->remarks_addButtonEntry('about', '<h4>About</h4>', 3, false);
+        }
+  }
 
     private function populateButtonsList(){
-        global $buttons_List;
 
-        $buttons_List[] = $this->remarks_addButtonEntry('overview', '<h4>Overview</h4>', 0, false, true);
-        $buttons_List[] = $this->remarks_addButtonEntry('about', '<h4>About</h4>', 0, false);
-        $buttons_List[] = $this->remarks_addButtonEntry('post', '<h4>Post</h4>', 1, true);
-        $buttons_List[] = $this->remarks_addButtonEntry('category', '<h4>Category</h4>', 1, true);
-        $buttons_List[] = $this->remarks_addButtonEntry('author', '<h4>Post Author</h4>', 1, true);
-        $buttons_List[] = $this->remarks_addButtonEntry('geolocate', '<h4>Geolocation</h4>', 1, true);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('overview', '<h4>Overview</h4>', 0, false, true);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('about', '<h4>About</h4>', 0, false);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('post', '<h4>Post</h4>', 1, true);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('category', '<h4>Category</h4>', 1, true);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('author', '<h4>Post Author</h4>', 1, true);
+        $this->buttonsList[] = $this->remarks_addButtonEntry('geolocate', '<h4>Geolocation</h4>', 1, true);
     }
 
-    private function makeAllButtons($remarks_total_comments){
-      global $buttons_List;
-
+    private function makeAllButtons(){
       $currentLine = 0;
       echo "<div id='nav_row_".$currentLine."'>";
 
-      foreach ($buttons_List as $button) {
-          if ($currentLine < $button['line'] && $remarks_total_comments > 0) {
+      foreach ($this->buttonsList as $button) {
+          if ($currentLine < $button['line'] && $this->totalComments > 0) {
             echo "</div>";
             $currentLine++;
             echo "<div id='nav_row_".$currentLine."'>";
@@ -39,7 +49,6 @@ class RemarksInterface {
 
      /* PRINT */
      private function makeButton($button){
-          global $buttons_List;
           echo "<div ";
 
           if ($button['startEnabled'] == true){
@@ -69,23 +78,14 @@ class RemarksInterface {
      }
 
       public function renderInterface($remarks_total_comments) {
-        if ($remarks_total_comments > 0){
-echo "<div id='main_nav_with_comments'><br/>";
-          $this->populateButtonsList();
-          $this->makeAllButtons($remarks_total_comments);
-echo "</div>
-<br/>";
-    } else {
-      echo "<div id='main_nav_no_comments'><br/>";
-      global $buttons_List;
-      $buttons_List[] = $this->remarks_addButtonEntry('overview', '<h4>Overview</h4>', 3, false, true);
-      $buttons_List[] = $this->remarks_addButtonEntry('about', '<h4>About</h4>', 3, false);
-
-      makeAllButtons(0);
-      echo "
-</div>
-<br/>";
+        if ($this->totalComments > 0){
+          echo "<div id='main_nav_with_comments'><br/>";
+        }
+        else {
+          echo "<div id='main_nav_no_comments'><br/>";
+        }
+        $this->makeAllButtons();
+        echo "</div><br/>";
     }
-     }
 }
 ?>
