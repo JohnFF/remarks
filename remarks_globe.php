@@ -19,7 +19,7 @@ class RemarksGlobe { // For common functionality, although there isn't much.
     $this->populateCityByComments();
   }
 
-function addLongLatsToMatrix($long, $lat){
+private function addLongLatsToMatrix($long, $lat){
 	
 	if (array_key_exists($long, $this->longlats)){
 		if (array_key_exists($lat, $this->longlats[$long])){
@@ -34,11 +34,11 @@ function addLongLatsToMatrix($long, $lat){
 }
 
 
-function stripCountry($raw_country){
+private function stripCountry($raw_country){
 	return ucwords(strtolower(substr($raw_country, 0, strpos($raw_country, " ("))));
 }
 
-function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitude, $longitude){
+private function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitude, $longitude){
   global $wpdb;
 
 	$sql = "INSERT INTO `" . $wpdb->prefix . "remarks_comments` VALUES ($commentID".', \''.$city.'\', \''.$country.'\', '.$latitude.', '.$longitude.')';
@@ -51,7 +51,7 @@ function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitud
 
 }
 
-function Geolocation_RegisterCountry($country){
+private function Geolocation_RegisterCountry($country){
 
     // 3. see if that city and country exists
     if (array_key_exists($country, $this->countries)){
@@ -63,7 +63,7 @@ function Geolocation_RegisterCountry($country){
     }
 }
 
-function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
+private function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
     
     // thanks Dan Grossman of Stack Overflow!
     $response = file("http://api.hostip.info/get_html.php?ip=$eachIP&position=true");
@@ -101,7 +101,7 @@ function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
     }
 }
 
-function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
+private function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
 
      $response_raw = file("http://freegeoip.net/csv/$eachIP");
      

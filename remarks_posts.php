@@ -30,7 +30,7 @@ class RemarksPosts {
   }
 
 
-function renderPostMatrix(){
+public function render(){
       echo "<div id='post_div' class='startHidden'>";
     echo "<table>";
     echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
@@ -43,12 +43,12 @@ function renderPostMatrix(){
 }
 
 
-function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $numComments ){
+private function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $numComments ){
   $this->remarksPosts[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
 }
 
 
-function populatePostMatrix(){
+private function populatePostMatrix(){
   global $wpdb;
 
   $getCommentedPostsQuery = "SELECT $wpdb->posts.ID as post_ID, $wpdb->posts.post_title, $wpdb->posts.post_author, $wpdb->users.display_name AS 'author_name', $wpdb->posts.guid, count($wpdb->comments.comment_ID) AS 'count' 
