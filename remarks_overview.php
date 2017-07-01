@@ -3,14 +3,17 @@
 class RemarksOverview {
 
   private $totalComments;
+  private $postsHighestStat;
   private $categoryHighestStat;
   private $authorHighestStat;
   private $countriesHighestStat;
 
-  function __construct($totalComments, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
+  function __construct($totalComments, $postsHighestStat, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
     $this->totalComments = $totalComments;
+    $this->postsHighestStat = $postsHighestStat;
     $this->categoryHighestStat = $categoryHighestStat;
     $this->authorHighestStat = $authorHighestStat;
+    $this->countriesHighestStat = $countriesHighestStat;
   }
 
   function render() {
@@ -26,8 +29,7 @@ class RemarksOverview {
       <h5>Most commented Post:</h5>
       <br/>";
 
-    global $remarks_posts_top;
-    echo $remarks_posts_top['label']." (".$remarks_posts_top['count'].")";
+    echo $this->postsHighestStat['label']." (".$this->postsHighestStat['count'].")";
 
     echo "<br/>";
     echo "<br/>";

@@ -25,7 +25,6 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-include dirname(__FILE__)."/remarks_globals.php";
 include dirname(__FILE__)."/remarks_posts.php";
 include dirname(__FILE__)."/remarks_segment.php";
 include dirname(__FILE__)."/remarks_overview.php";
@@ -41,7 +40,7 @@ register_activation_hook(__FILE__,'globe_Initialise');
 //load_plugin_textdomain('remarks','/wp-content/plugins/remarks/mo-po-files/');
 
 add_action('admin_menu', 'wrapper');
-add_action('wp_set_comment_status', 'comment_changes', 10, 2 );
+add_action('wp_set_comment_status', 'comment_changes', 10, 2);
 
 
 /* include css and javascript */
@@ -62,7 +61,7 @@ function wrapper(){
 
 function comment_changes($commentID, $status){
 
-    global $wpdb;
+  global $wpdb;
 	$wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
 	if ($status === 'spam' || $status === 'trash' || $status === 'hold'){
@@ -74,11 +73,7 @@ function comment_changes($commentID, $status){
 
 function remarks_main(){
     global $wpdb;
-    global $remarks_posts;
 
-    populatePostMatrix();
-
-    
     $wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
     $getApprovedCommentCountQuery = "SELECT count(comment_approved) comments_count FROM $wpdb->comments where comment_approved = '1' group by comment_approved";
@@ -91,26 +86,25 @@ function remarks_main(){
       $remarks_total_comments = 0;
     }
 
-    $remarksCategories = new RemarksCategories($remarks_posts);
-    $remarksAuthors = new RemarksAuthors();    
+    $posts = new RemarksPosts();
+    $remarksCategories = new RemarksCategories($posts->getPosts());
+    $remarksAuthors = new RemarksAuthors($posts->getPosts());
     $globe = new RemarksGlobe();
 
     $interface = new RemarksInterface($remarks_total_comments);
     $interface->renderInterface();
 
     echo "<div id='display'>";
-      $remarksOverview = new RemarksOverview(
-         $remarks_total_comments,
-         $remarksCategories->getHighestStat(),
-         $remarksAuthors->getHighestStat(),
-        $globe->getHighestStat()
-      );
-       $remarksOverview->render();
+    $remarksOverview = new RemarksOverview(
+      $remarks_total_comments,
+      $posts->getHighestStat(),
+      $remarksCategories->getHighestStat(),
+      $remarksAuthors->getHighestStat(),
+      $globe->getHighestStat()
+    );
+    $remarksOverview->render();
 
-    echo "<div id='post_div' class='startHidden'>";
-        renderPostMatrix();
-    echo "<br/>";
-    echo "</div>";
+    $posts->renderPostMatrix();
      
     $remarksCategories->render();
 

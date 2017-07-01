@@ -1,15 +1,17 @@
 <?php
 
 class RemarksAuthors extends RemarksSegment {
-  
-    public function __construct() {
+
+  private $remarksPosts;
+
+    public function __construct($remarksPosts) {
+        $this->remarksPosts = $remarksPosts;
         $this->populateAuthorMatrix();
         parent::__construct('author');
     }
     
     private function populateAuthorMatrixRow($authorID, $authorName){
         global $wpdb;
-        global $remarks_posts;
 
         $retrievePosts = "SELECT ID FROM $wpdb->posts WHERE post_author = $authorID AND post_status='publish'";
         $authors = $wpdb->get_results($retrievePosts, ARRAY_A);
@@ -19,7 +21,7 @@ class RemarksAuthors extends RemarksSegment {
 
         foreach ($authors as $post){
                 $numPosts +=1;
-                $numComments +=$remarks_posts[$post['ID']]['count'];
+                $numComments += $this->remarksPosts[$post['ID']]['count'];
         }
 
         $this->segmentData[] = array('numPosts' => $numPosts, 'count' => $numComments, 'name' => $authorName, 'id' => $authorID);
