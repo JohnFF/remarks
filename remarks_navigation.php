@@ -77,7 +77,7 @@ class RemarksInterface {
        echo "\t</nav><!-- end $section"."_options -->\n";
      }
 
-      public function renderInterface($remarks_total_comments) {
+      public function renderInterface() {
         if ($this->totalComments > 0){
           echo "<div id='main_nav_with_comments'><br/>";
         }

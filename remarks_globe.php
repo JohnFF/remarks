@@ -14,6 +14,9 @@ class RemarksGlobe { // For common functionality, although there isn't much.
     $this->longlats = array();
     $this->countries = array();
     $this->countries_top = array();
+
+    $this->globe_Initialise();
+    $this->populateCityByComments();
   }
 
 function addLongLatsToMatrix($long, $lat){
@@ -244,6 +247,10 @@ echo "</div><br/>
 
 
 }
+
+   public function getHighestStat(){
+     return $this->countriesTop; // has been reordered so that highest is at the top.
+   }
 
 }
 ?>

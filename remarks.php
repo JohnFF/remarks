@@ -78,8 +78,6 @@ function remarks_main(){
 
     populatePostMatrix();
 
-    $globe = new RemarksGlobe();
-    $globe->populateCityByComments();
     
     $wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
@@ -95,12 +93,18 @@ function remarks_main(){
 
     $remarksCategories = new RemarksCategories($remarks_posts);
     $remarksAuthors = new RemarksAuthors();    
+    $globe = new RemarksGlobe();
 
     $interface = new RemarksInterface($remarks_total_comments);
     $interface->renderInterface();
 
     echo "<div id='display'>";
-       $remarksOverview = new RemarksOverview($remarks_total_comments, $remarksCategories->getHighestStat(), $remarksAuthors->getHighestStat());
+      $remarksOverview = new RemarksOverview(
+         $remarks_total_comments,
+         $remarksCategories->getHighestStat(),
+         $remarksAuthors->getHighestStat(),
+        $globe->getHighestStat()
+      );
        $remarksOverview->render();
 
     echo "<div id='post_div' class='startHidden'>";
@@ -120,6 +124,5 @@ function remarks_main(){
 
     echo "<br/><br/>";
 
-    $globe->globe_Initialise();
 }
 ?>

@@ -5,8 +5,9 @@ class RemarksOverview {
   private $totalComments;
   private $categoryHighestStat;
   private $authorHighestStat;
+  private $countriesHighestStat;
 
-  function __construct($totalComments, $categoryHighestStat, $authorHighestStat) {
+  function __construct($totalComments, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
     $this->totalComments = $totalComments;
     $this->categoryHighestStat = $categoryHighestStat;
     $this->authorHighestStat = $authorHighestStat;
@@ -49,8 +50,7 @@ class RemarksOverview {
     echo "<h5>Origin of most comments:</h5>";
     echo "<br/>";
 
-    global $remarks_countries_top;
-    echo $remarks_countries_top['label']." (".$remarks_countries_top['count'].")";
+    echo $this->remarks_countries_top['label'] . " (" . $this->remarks_countries_top['count'].")";
 
     echo "<br/>";
     echo "<br/>";
