@@ -116,31 +116,29 @@ private function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
      Geolocation_InsertCommentLocation($commentIndex, $country, $city, $latitude, $longitude);
 }
 
-function onPostDeletion($commentID){
+	public static function onPostDeletion($commentID){
+		global $wpdb;
 
-    global $wpdb;
+		$sql = "DELETE
+			FROM       `" . $wpdb->prefix . "remarks_comments`
+			WHERE      comment_ID = '$commentID'";
 
-	$sql = "DELETE
-	    FROM       `" . $wpdb->prefix . "remarks_comments`
-	    WHERE      comment_ID = '$commentID'";
+		$wpdb->query($sql);
+	}
 
-    $wpdb->query($sql);
-}
+	public static function onPostCreation($commentID){
+		global $wpdb;
 
-function onPostCreation($commentID){
+		$sql = "SELECT  comment_author_IP
+			FROM       `$wpdb->comments`
+			WHERE      comment_ID = '$commentID'";
 
-    global $wpdb;
+		$rawIP = $wpdb->get_results($sql , ARRAY_A);
 
-	$sql = "SELECT  comment_author_IP 
-	    FROM       `$wpdb->comments`
-	    WHERE      comment_ID = '$commentID'";
+		IPtoLocationEntry_FreeGeoIp($commentID, $rawIP[0]['comment_author_IP']);
+	}
 
-    $rawIP = $wpdb->get_results($sql , ARRAY_A);
-    
-    IPtoLocationEntry_FreeGeoIp($commentID, $rawIP[0]['comment_author_IP']);
-}
-
-function updateTableRecords(){
+private function updateTableRecords(){
 
     global $wpdb;
 
@@ -157,7 +155,7 @@ function updateTableRecords(){
 
 }
 
-function populateCityByComments(){
+private function populateCityByComments(){
     global $wpdb;
 
     // 0. retrieve the data
@@ -210,7 +208,7 @@ function renderMapByComments(){
 }
 
 
-function globe_Initialise(){
+public static function globe_Initialise(){
   global $wpdb;
 
     // if the table doesn't exist, create it
@@ -232,7 +230,7 @@ dbDelta($sql);
 
 }
 
-function render () {
+public function render () {
 echo "<div id='geolocate_div' class='startHidden'>
     <div id='geolocate_table_div'>";
       $this->renderGeolocationCommentsTable();

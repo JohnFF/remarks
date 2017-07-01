@@ -33,7 +33,7 @@ include dirname(__FILE__)."/remarks_authors.php";
 include dirname(__FILE__)."/remarks_globe.php";
 include dirname(__FILE__)."/remarks_navigation.php";
 
-register_activation_hook(__FILE__,'globe_Initialise');
+register_activation_hook(__FILE__,'globe_Initialise::globe_Initialise');
 
 // TODO: fix up language things below
 //if(!load_plugin_textdomain('remarks','/wp-content/languages/'))
@@ -65,9 +65,9 @@ function comment_changes($commentID, $status){
 	$wpdb->remarks_comments = $wpdb->prefix . 'remarks_comments';
 
 	if ($status === 'spam' || $status === 'trash' || $status === 'hold'){
-		onPostDeletion($commentID);
+		RemarksGlobe::onPostDeletion($commentID);
 	} elseif ($status === 'approve'){
-		onPostCreation($commentID);
+		RemarksGlobe::onPostCreation($commentID);
 	}
 }
 
