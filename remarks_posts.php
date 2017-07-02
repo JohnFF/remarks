@@ -57,7 +57,7 @@ class RemarksPosts extends RemarksSegment {
 			}
 		}
 
-		usort( $this->segment_data, 'self::reorder' );
+		//usort( $this->segment_data, 'self::reorder' );
 	}
 
 // populate_post_matrix()

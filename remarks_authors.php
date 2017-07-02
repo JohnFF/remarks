@@ -22,6 +22,7 @@ class RemarksAuthors extends RemarksSegment {
 		foreach ( $authors as $post ) {
 			$num_posts += 1;
 			$num_comments += $this->remarks_posts[$post['ID']]['count'];
+		    //echo print_r($this->remarks_posts, TRUE) . "<br/><br/>";
 		}
 
 		$this->segment_data[] = array('num_posts' => $num_posts, 'count' => $num_comments, 'name' => $author_name, 'id' => $author_id);
@@ -36,7 +37,8 @@ class RemarksAuthors extends RemarksSegment {
 		foreach ( $authors as $each_author ) {
 			$this->populate_author_matrix_row( $each_author['ID'], $each_author['display_name'] );
 		}
-		usort( $this->segment_data, 'self::reorder' );
+//		die();
+		uasort( $this->segment_data, 'self::reorder' ); // Maintain array association.
 	}
 
 	private function render_author_matrix_row( $author_index ) {
