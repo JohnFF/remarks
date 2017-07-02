@@ -3,8 +3,8 @@
 /*
   Plugin Name: Remarks
   Plugin URI: http://www.civifirst.com
-  Description: Analyse the number of comments you get by post, category and author. Uses graphs!
-  Version: 4.0
+  Description: Analyse the number of comments you get by post, category, author, and location. Uses charts and maps!
+  Version: 4.1
   Author: CiviFirst John
   Author URI: http://www.civifirst.com
   License: GPL2
@@ -86,13 +86,17 @@ function remarks_main() {
 	}
 
 	// Create the section objects.
+	$interfaceSection = new RemarksInterface( $total_approved_comments );
 	$postsSection = new RemarksPosts();
 	$categoriesSection = new RemarksCategories( $postsSection->get_posts() );
 	$authorsSection = new RemarksAuthors( $postsSection->get_posts() );
 	$globeSection = new RemarksGlobe();
-	$interfaceSection = new RemarksInterface( $total_approved_comments );
 	$overviewSection = new RemarksOverview(
-			$total_approved_comments, $postsSection->get_highest_stat(), $categoriesSection->get_highest_stat(), $authorsSection->get_highest_stat(), $globeSection->get_highest_stat()
+			$total_approved_comments, 
+			$postsSection->get_highest_stat(),
+			$categoriesSection->get_highest_stat(),
+			$authorsSection->get_highest_stat(),
+			$globeSection->get_highest_stat()
 	);
 
 	// Start rendering.

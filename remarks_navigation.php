@@ -56,7 +56,7 @@ class RemarksInterface {
 		if ( $button['startEnabled'] == true ) {
 			echo "class='remarks_button remarks_button_selected " . $button['tag'] . "_bg_colour'";
 		} else {
-			echo "class='remarks_button'";
+			echo "class='remarks_button' ";
 		}
 
 		echo "id='" . $button['id'] . "'>\n";
@@ -90,5 +90,3 @@ class RemarksInterface {
 	}
 
 }
-
-?>

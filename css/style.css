@@ -216,6 +216,7 @@ td
 	padding-right: 10px;
 	padding-left: 10px;
 	width: 25%;
+	align: center;
 }
 
 tr.header
@@ -305,4 +306,21 @@ h5
 	display: inline-block;
 	font-size: 110%;
 	font-weight: bold;
+}
+
+/*
+	PIE CHARTS
+*/
+.pie_chart,
+.pie_legend {
+    display: inline-block;
+}
+
+.pie_chart {
+    vertical-align: middle;
+}
+
+.pie_legend {
+    vertical-align: middle;
+    padding-left: 5%;
 }

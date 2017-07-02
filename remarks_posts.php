@@ -75,9 +75,9 @@ class RemarksPosts extends RemarksSegment {
 	private function render_post_matrix_row( $id ) {
 		echo "<tr>\n";
 		echo "\t<td><a href='" . $this->segment_data[$id]['guid'] . "' >" . $this->segment_data[$id]['name'] . "</a></td>\n";
-		echo "\t<td align='center'>" . $this->segment_data[$id]['count'] . " comments</td>\n";
+		echo "\t<td>" . $this->segment_data[$id]['count'] . " comments</td>\n";
 		echo "\t<td>" . $this->categories_links( $this->segment_data[$id]['categories'] ) . "</td>\n";
-		echo "\t<td align='center'><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$id]['author'] . "'>" . $this->segment_data[$id]['author_name'] . "</a></td>\n";
+		echo "\t<td><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$id]['author'] . "'>" . $this->segment_data[$id]['author_name'] . "</a></td>\n";
 		echo "</tr>\n";
 	}
 

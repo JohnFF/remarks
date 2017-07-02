@@ -177,7 +177,7 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 	function render_geolocation_comments_table() {
 		// draw a table of each city by the number of comments it has
 		echo "<table id='geolocate_table'>\n";
-		echo "\t<tr><td><strong>Location</strong></a></td><td><strong>Number of Comments</strong></td></tr>\n";
+		echo "\t<tr><td><strong>Location</strong></td><td><strong>Number of Comments</strong></td></tr>\n";
 		foreach ( $this->countries as $countryKey => $eachCountry ) {
 			echo "\t<tr><td>$countryKey</td><td align='center'>$eachCountry</td></tr>\n";
 		}
@@ -236,5 +236,3 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 	}
 
 }
-
-?>

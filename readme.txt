@@ -4,24 +4,24 @@ Donate link: http://kiva.com
 Tags: comments, comments analysis, comments review, popular, remarks, meta, metrics, information, analysis, geolocation, geomapping, comment locations, comment geolocations, community, targetting, discussion, feedback, map, demographics
 Requires at least: 3.1.1
 Tested up to: 4.2.4
-Stable tag: 4.0
+Stable tag: 4.1
 
-Analysis of your site's comments, showing which posts, authors, and categories generate the most discussion with tables, charts and geolocation.
+Analysis of your site's comments, showing which posts, authors, and categories generate the most discussion with tables, charts, and geolocation.
 
 == Description ==
 
 Remarks gives useful charts, tables, and geolocations of your blog's comments, and may help you to decide how to focus your blog for even greater comment harvesting.  You will be able to see which of your posts, categories, and authors generate the most discussion. The breakdowns that Remarks produces are accessible via the WordPress Admin menu.
 
-Remarks uses a slightly modified library called LibChart (http://naku.dohcrew.com/libchart/pages/introduction/) to draw bar and pie charts.
+Remarks uses D3 JS (https://d3js.org/) to draw bar and pie charts.
 
 All feedback is really appreciated - please mail to john HAT civifirst DOT com
 
 == Installation ==
 
-1. In the "Plugins" section of the WordPress Admin menu, click on "Add New"
-2. Enter the phrase "Remarks" into the search bar (we are the first result!)
+1. In the "Plugins" section of the WordPress Admin menu, click on "Add New".
+2. Enter the phrase "Remarks" into the search bar.
 3. Press "download" and hit yes when the prompt asks you to.
-4. After the download, hit "Activate"
+4. After the download, hit "Activate".
 
 == Frequently Asked Questions ==
 

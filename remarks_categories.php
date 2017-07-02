@@ -49,7 +49,7 @@ class RemarksCategories extends RemarksSegment {
 	public function render_matrix() {
 		echo "<div id='category_table'>\n\n";
 		echo "<table class='centralise'>";
-		echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
+		echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</strong></td></tr>\n";
 		foreach ( $this->segment_data as $author_key => $each_author ) {
 			$this->render_category_matrix_row( $author_key );
 		}

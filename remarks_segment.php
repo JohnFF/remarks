@@ -109,19 +109,13 @@ function InitChart() {
 
 }
         </script>";
-
-
-		/*      $URL = home_url().'/wp-content/plugins/remarks/remarks_barchart.php?';
-		  foreach ($this->remarks_categories as $category){
-		  $URL = $URL.$category['name']."=".$category['count']."&";
-		  }
-		  $URL = $URL.'chart_title'."=Comment%20Breakdown%20By%20Category";
-
-		  echo '<img id="category_bar" alt="Bar Chart of Posts by Categories" class="startHidden" src="'.$URL.'">'; */
 	}
 
 	protected function draw_pie() {
-		echo '<div id="' . $this->segment_type . '_pie" class="startHidden" ></div>
+		echo '<div id="' . $this->segment_type . '_pie" class="startHidden" >
+			<div id="' . $this->segment_type . '_pie_chart" class="pie_chart" width="500" height="500"></div>
+			<div id="' . $this->segment_type . '_pie_legend" class="pie_legend" width="500" height="500"></div>
+			</div>
             <script src="http://wordpress/d3.min.js"></script><!-- TODO FIX SCRIPT LOCATION -->
             <script>
 
@@ -148,7 +142,7 @@ function InitChart() {
 
             var color = d3.scale.category20b();
 
-            var svg = d3.select("#' . $this->segment_type . '_pie")
+            var svg = d3.select("#' . $this->segment_type . '_pie_chart")
               .append("svg")
               .attr("width", width)
               .attr("height", height)
@@ -172,6 +166,39 @@ function InitChart() {
               .attr("fill", function(d, i) {
                 return color(d.data.label);
               });
+
+			// Create SVG element
+			var legend_svg = d3.select("#' . $this->segment_type . '_pie_legend")
+				.attr("width", "500")
+				.attr("height", "500");
+
+			legend_svg.selectAll("g").data(dataset)
+			  .enter()
+			  .append("g")
+			  .each(function(data, index) {
+
+				if (data.count == 0) {
+				  jQuery(this).remove();
+				  return;
+				}
+
+				var g = d3.select(this);
+
+				g.append("div")
+				  .attr("x", 0)
+				  .attr("y", index * 25)
+				  .attr("width", 10)
+				  .attr("height", 10)
+				  .attr("display", "inline-block")
+				  .style("background-color", color(data.label));
+
+				g.append("li")
+				 // .attr("x", 15)
+				 // .attr("y", index * 25 + 8)
+				  .attr("height",30)
+				  .attr("width",200)
+				  .html("<span style=\'color: " + color(data.label) + "\'>" + data.label + "</span><br/>");
+			  });
 
             })(window.d3);
         </script>';
