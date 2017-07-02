@@ -17,27 +17,6 @@ class RemarksPosts extends RemarksSegment {
 		return substr( $output_string, 0, strlen( $output_string ) - 2 );
 	}
 
-	private function render_post_matrix_row( $id ) {
-		echo "<tr>\n";
-		echo "\t<td><a href='" . $this->segment_data[$id]['guid'] . "' >" . $this->segment_data[$id]['title'] . "</a></td>\n";
-		echo "\t<td align='center'>" . $this->segment_data[$id]['count'] . " comments</td>\n";
-		echo "\t<td>" . $this->categories_links( $this->segment_data[$id]['categories'] ) . "</td>\n";
-		echo "\t<td align='center'><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$id]['author'] . "'>" . $this->segment_data[$id]['author_name'] . "</a></td>\n";
-		echo "</tr>\n";
-	}
-
-	public function render() {
-		echo "<div id='post_div' class='startHidden'>";
-		echo "<table>";
-		echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
-		foreach ( $this->segment_data as $each_postIndex => $each_post ) {
-			$this->render_post_matrix_row( $each_postIndex );
-		}
-		echo "</table>\n\n";
-		echo "<br/>";
-		echo "</div>";
-	}
-
 	private function add_post_matrix_row( $id, $title, $guid, $author_id, $author_name, $num_comments ) {
 
 		$title_length = strlen( $title );
@@ -46,7 +25,7 @@ class RemarksPosts extends RemarksSegment {
 			$title = substr( $title, 0, self::POST_TITLE_MAX_LENGTH ) . '...';
 		}
 
-		$this->segment_data[$id] = array('title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories( $id ), 'author' => $author_id, 'author_name' => $author_name, 'count' => $num_comments);
+		$this->segment_data[$id] = array('name' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories( $id ), 'author' => $author_id, 'author_name' => $author_name, 'count' => $num_comments);
 	}
 
 	private function populate_post_matrix() {
@@ -93,4 +72,24 @@ class RemarksPosts extends RemarksSegment {
 		return $this->segment_data;
 	}
 
+	private function render_post_matrix_row( $id ) {
+		echo "<tr>\n";
+		echo "\t<td><a href='" . $this->segment_data[$id]['guid'] . "' >" . $this->segment_data[$id]['name'] . "</a></td>\n";
+		echo "\t<td align='center'>" . $this->segment_data[$id]['count'] . " comments</td>\n";
+		echo "\t<td>" . $this->categories_links( $this->segment_data[$id]['categories'] ) . "</td>\n";
+		echo "\t<td align='center'><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$id]['author'] . "'>" . $this->segment_data[$id]['author_name'] . "</a></td>\n";
+		echo "</tr>\n";
+	}
+
+	public function render_matrix() {
+		echo "<div id='post_table'>";
+		echo "<table>";
+		echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
+		foreach ( $this->segment_data as $each_postIndex => $each_post ) {
+			$this->render_post_matrix_row( $each_postIndex );
+		}
+		echo "</table>\n\n";
+		echo "<br/>";
+		echo "</div>";
+	}
 }

@@ -38,9 +38,11 @@ function InitChart() {
 
   var barData = [";
 
-		foreach ( $this->segment_data as $key => $category ) {
+		$segmentDataValues = array_values($this->segment_data);
+
+		foreach ( $segmentDataValues as $key => $category ) {
 			echo "{ x: '" . $category['name'] . "', y: " . $category['count'] . "}";
-			if ( $key <= count( $this->segment_data ) ) {
+			if ( $key <= count( $segmentDataValues ) ) {
 				echo ",";
 			}
 		}
@@ -128,9 +130,11 @@ function InitChart() {
 
             var dataset = [';
 
-		foreach ( $this->segment_data as $key => $category ) {
+		$segmentDataValues = array_values($this->segment_data);
+
+		foreach ( $segmentDataValues as $key => $category ) {
 			echo "{ label: '" . $category['name'] . "', count: " . $category['count'] . "}";
-			if ( $key <= count( $this->segment_data ) ) {
+			if ( $key <= count( $segmentDataValues ) ) {
 				echo ",";
 			}
 		}

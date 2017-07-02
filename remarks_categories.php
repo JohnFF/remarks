@@ -7,22 +7,6 @@ class RemarksCategories extends RemarksSegment {
 		$this->populate_category_matrix( $remarks_post_matrix );
 	}
 
-	private function render_category_matrix_row( $category_index ) {
-		echo "<tr><td><a href='/?cat=" . $this->segment_data[$category_index]['id'] . "'>" . $this->segment_data[$category_index]['name'] .
-		"</a></td><td>" . $this->segment_data[$category_index]['count'] . " comments</td><td>" . $this->segment_data[$category_index]['num_posts'] . "</td></tr>\n";
-	}
-
-	public function render_matrix() {
-		echo "<div id='category_table'>\n\n";
-		echo "<table class='centralise'>";
-		echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
-		foreach ( $this->segment_data as $author_key => $each_author ) {
-			$this->render_category_matrix_row( $author_key );
-		}
-		echo "</table>\n\n";
-		echo "</div>\n\n";
-	}
-
 	public function populate_category_matrix( $remarks_post_matrix ) {
 		global $wpdb;
 		$category_count_matrix = array();
@@ -57,4 +41,19 @@ class RemarksCategories extends RemarksSegment {
 		usort( $this->segment_data, 'self::reorder' );
 	}
 
+	private function render_category_matrix_row( $category_index ) {
+		echo "<tr><td><a href='/?cat=" . $this->segment_data[$category_index]['id'] . "'>" . $this->segment_data[$category_index]['name'] .
+		"</a></td><td>" . $this->segment_data[$category_index]['count'] . " comments</td><td>" . $this->segment_data[$category_index]['num_posts'] . "</td></tr>\n";
+	}
+
+	public function render_matrix() {
+		echo "<div id='category_table'>\n\n";
+		echo "<table class='centralise'>";
+		echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
+		foreach ( $this->segment_data as $author_key => $each_author ) {
+			$this->render_category_matrix_row( $author_key );
+		}
+		echo "</table>\n\n";
+		echo "</div>\n\n";
+	}
 }

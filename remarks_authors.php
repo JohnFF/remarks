@@ -27,6 +27,18 @@ class RemarksAuthors extends RemarksSegment {
 		$this->segment_data[] = array('num_posts' => $num_posts, 'count' => $num_comments, 'name' => $author_name, 'id' => $author_id);
 	}
 
+	public function populate_author_matrix() {
+		global $wpdb;
+
+		$retrieveAuthors = "SELECT ID, display_name FROM $wpdb->users WHERE 1";
+		$authors = $wpdb->get_results( $retrieveAuthors, ARRAY_A );
+
+		foreach ( $authors as $each_author ) {
+			$this->populate_author_matrix_row( $each_author['ID'], $each_author['display_name'] );
+		}
+		usort( $this->segment_data, 'self::reorder' );
+	}
+
 	private function render_author_matrix_row( $author_index ) {
 		echo "<tr><td><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$author_index]['id'] . "'>" . $this->segment_data[$author_index]['name'] . "</a></td><td>" . $this->segment_data[$author_index]['count'] . " comments</td><td>" . $this->segment_data[$author_index]['num_posts'] . " posts</td></tr>\n";
 	}
@@ -41,17 +53,4 @@ class RemarksAuthors extends RemarksSegment {
 		echo "</table>\n\n";
 		echo "</div>\n\n";
 	}
-
-	public function populate_author_matrix() {
-		global $wpdb;
-
-		$retrieveAuthors = "SELECT ID, display_name FROM $wpdb->users WHERE 1";
-		$authors = $wpdb->get_results( $retrieveAuthors, ARRAY_A );
-
-		foreach ( $authors as $each_author ) {
-			$this->populate_author_matrix_row( $each_author['ID'], $each_author['display_name'] );
-		}
-		usort( $this->segment_data, 'self::reorder' );
-	}
-
 }
