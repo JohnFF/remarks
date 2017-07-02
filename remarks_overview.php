@@ -29,7 +29,7 @@ class RemarksOverview {
       <h5>Most commented Post:</h5>
       <br/>";
 
-    echo $this->postsHighestStat['title']." (".$this->postsHighestStat['count'].")";
+    echo $this->postsHighestStat['name']." (".$this->postsHighestStat['count'].")";
 
     echo "<br/>";
     echo "<br/>";

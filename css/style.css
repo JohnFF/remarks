@@ -110,7 +110,7 @@
 
 .nav_row_2_member
 {
-  //margin-left: 73%;
+  /* margin-left: 73%; */
 }
 
 #nav_row_3
@@ -215,6 +215,7 @@ td
 {
 	padding-right: 10px;
 	padding-left: 10px;
+	width: 25%;
 }
 
 tr.header

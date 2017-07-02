@@ -33,11 +33,11 @@ class RemarksPosts extends RemarksSegment {
 
 		$get_commented_posts_query = "SELECT $wpdb->posts.ID as post_ID, $wpdb->posts.post_title, $wpdb->posts.post_author, $wpdb->users.display_name AS 'author_name', $wpdb->posts.guid, count($wpdb->comments.comment_ID) AS 'count'
 			FROM $wpdb->posts LEFT JOIN $wpdb->comments ON $wpdb->posts.ID=$wpdb->comments.comment_post_id LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID
-			WHERE post_status = 'publish' AND $wpdb->comments.comment_approved='1'
+			WHERE post_status = 'publish' AND $wpdb->comments.comment_approved='1' AND post_type='post'
 			GROUP BY $wpdb->posts.ID
 			ORDER BY count($wpdb->comments.comment_ID) DESC";
 
-		$get_uncommented_posts_query = "SELECT $wpdb->posts.ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'";
+		$get_uncommented_posts_query = "SELECT $wpdb->posts.ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'  AND post_type='post'";
 
 		//echo "about to call query: $query<br/>";
 		$commented_posts = $wpdb->get_results( $get_commented_posts_query, ARRAY_A );
@@ -45,7 +45,7 @@ class RemarksPosts extends RemarksSegment {
 		// TODO produce query of posts with no comments
 		if ( $commented_posts != FALSE ) {
 			foreach ( $commented_posts as $each_post ) {
-				$get_uncommented_posts_query = $get_uncommented_posts_query . " AND post_ID != " . $each_post['post_ID'];
+				$get_uncommented_posts_query = $get_uncommented_posts_query . " AND $wpdb->posts.ID != " . $each_post['post_ID'];
 				$this->add_post_matrix_row( $each_post['post_ID'], $each_post['post_title'], $each_post['guid'], $each_post['post_author'], $each_post['author_name'], $each_post['count'] );
 			}
 		}
