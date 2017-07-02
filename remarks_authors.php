@@ -10,7 +10,7 @@ class RemarksAuthors extends RemarksSegment {
         parent::__construct('author');
     }
     
-    private function populateAuthorMatrixRow($authorID, $authorName){
+    private function populateAuthorMatrixRow($authorID, $authorName) {
         global $wpdb;
 
         $retrievePosts = "SELECT ID FROM $wpdb->posts WHERE post_author = $authorID AND post_status='publish'";

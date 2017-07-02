@@ -2,6 +2,8 @@
 
 class RemarksPosts {
 
+	const POST_TITLE_MAX_LENGTH = 50;
+
   private $remarksPosts;
   private $remarksPostsTop;
 
@@ -44,6 +46,13 @@ public function render(){
 
 
 private function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $numComments ){
+
+	$title_length = strlen($title);
+
+	if ($title_length >= self::POST_TITLE_MAX_LENGTH) {
+		$title = substr($title, 0, self::POST_TITLE_MAX_LENGTH);
+	}
+
   $this->remarksPosts[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
 }
 
@@ -78,10 +87,14 @@ private function populatePostMatrix(){
     }
   }
 
+  usort($this->remarksPosts, 'RemarksSegment::reorder');
+
 } // populatePostMatrix()
 
 public function getHighestStat() {
-  return $this->remarksPostsTop;
+	// This behaves slightly differently, as currently $this->remarksPosts is indexed by the post ID.
+	$values = array_values($this->remarksPosts); // Resets the indices to 0, 1, 2 etc.
+	return $values[0];
 }
 
 public function getPosts() {
