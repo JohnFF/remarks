@@ -25,8 +25,6 @@ class RemarksAuthors extends RemarksSegment {
         }
 
         $this->segmentData[] = array('numPosts' => $numPosts, 'count' => $numComments, 'name' => $authorName, 'id' => $authorID);
-
-        // self::remarks_handle_biggest_source($this->mostPopular, $this->highestNumber, $authorName, $numComments);
     }
 
     private function renderAuthorMatrixRow($authorIndex){
