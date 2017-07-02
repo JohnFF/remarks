@@ -18,15 +18,16 @@ class RemarksSegment {
   
     protected function __construct($classType){
         $this->segmentType = $classType;
+		$this->segmentData = array();
     }
-  
+
     protected static function reorder($a, $b) {
         if ($a['count'] == $b['count']) {
             return 0;
         }
         return ($a['count'] > $b['count']) ? -1 : 1;
     }
-    
+
     protected function drawBars(){
         echo "<svg width='1000' height='500' id='" . $this->segmentType . "_bar' class='startHidden'></svg>
             <script src='http://d3js.org/d3.v3.min.js'></script>
@@ -116,7 +117,7 @@ function InitChart() {
 
         echo '<img id="category_bar" alt="Bar Chart of Posts by Categories" class="startHidden" src="'.$URL.'">';*/
     }
-    
+
     protected function drawPie(){
         echo '<div id="' . $this->segmentType . '_pie" class="startHidden" ></div>
             <script src="http://wordpress/d3.min.js"></script><!-- TODO FIX SCRIPT LOCATION -->
@@ -171,11 +172,11 @@ function InitChart() {
             })(window.d3);
         </script>';
     }
- 
+
    public function getHighestStat(){
      return $this->segmentData[0]; // has been reordered so that highest is at the top.
    }
-     
+
     public function render(){
         echo "<div id='" . $this->segmentType . "_div' class='startHidden'>";
         RemarksInterface::remarks_renderNavigationOptions($this->segmentType);

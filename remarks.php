@@ -25,13 +25,13 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-include dirname(__FILE__)."/remarks_posts.php";
-include dirname(__FILE__)."/remarks_segment.php";
-include dirname(__FILE__)."/remarks_overview.php";
-include dirname(__FILE__)."/remarks_categories.php";
-include dirname(__FILE__)."/remarks_authors.php";
-include dirname(__FILE__)."/remarks_globe.php";
-include dirname(__FILE__)."/remarks_navigation.php";
+include_once dirname(__FILE__)."/remarks_segment.php";
+include_once dirname(__FILE__)."/remarks_posts.php";
+include_once dirname(__FILE__)."/remarks_overview.php";
+include_once dirname(__FILE__)."/remarks_categories.php";
+include_once dirname(__FILE__)."/remarks_authors.php";
+include_once dirname(__FILE__)."/remarks_globe.php";
+include_once dirname(__FILE__)."/remarks_navigation.php";
 
 register_activation_hook(__FILE__,'globe_Initialise::globe_Initialise');
 
@@ -115,4 +115,3 @@ function remarks_main(){
     echo "<br/><br/>";
 
 }
-?>

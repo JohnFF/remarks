@@ -6,8 +6,8 @@ class RemarksAuthors extends RemarksSegment {
 
     public function __construct($remarksPosts) {
         $this->remarksPosts = $remarksPosts;
-        $this->populateAuthorMatrix();
         parent::__construct('author');
+        $this->populateAuthorMatrix();
     }
     
     private function populateAuthorMatrixRow($authorID, $authorName) {

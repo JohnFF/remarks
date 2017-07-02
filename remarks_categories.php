@@ -3,8 +3,8 @@
 class RemarksCategories extends RemarksSegment {
   
     public function __construct($remarksPostMatrix) {
-        $this->populateCategoryMatrix($remarksPostMatrix);
         parent::__construct('category');
+        $this->populateCategoryMatrix($remarksPostMatrix);
     }
 
     private function renderCategoryMatrixRow($categoryIndex){
