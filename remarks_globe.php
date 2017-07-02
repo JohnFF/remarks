@@ -15,7 +15,7 @@ class RemarksGlobe { // For common functionality, although there isn't much.
     $this->countries = array();
     $this->countries_top = array();
 
-    $this->globe_Initialise();
+    self::globe_Initialise();
     $this->populateCityByComments();
   }
 
@@ -46,7 +46,7 @@ private function Geolocation_InsertCommentLocation($commentID, $country, $city, 
 	dbDelta($sql);
 
      if (($latitude != 0.0) || ($longitude != 0.0)){
-          addLongLatsToMatrix($longitude, $latitude);
+          $this->addLongLatsToMatrix($longitude, $latitude);
      }
 
 }
@@ -78,7 +78,6 @@ private function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
 		$parts = explode(': ', $line);
 		if (array_key_exists(1, $parts)){
 			$result[$parts[0]] = $parts[1];
-		} else {
 		}
 	    }
     }
@@ -96,8 +95,6 @@ private function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
 		
 	} elseif(array_key_exists('Country', $result)){
       $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, "?", 0.0, 0.0);
-      require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-      dbDelta($sql);
     }
 }
 
@@ -113,7 +110,7 @@ private function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
      
      $this->Geolocation_RegisterCountry($country);
      
-     Geolocation_InsertCommentLocation($commentIndex, $country, $city, $latitude, $longitude);
+     $this->Geolocation_InsertCommentLocation($commentIndex, $country, $city, $latitude, $longitude);
 }
 
 	public static function onPostDeletion($commentID){
@@ -230,7 +227,7 @@ dbDelta($sql);
 
 }
 
-public function render () {
+public function render() {
 echo "<div id='geolocate_div' class='startHidden'>
     <div id='geolocate_table_div'>";
       $this->renderGeolocationCommentsTable();

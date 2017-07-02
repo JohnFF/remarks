@@ -57,7 +57,7 @@ private function populatePostMatrix(){
     GROUP BY $wpdb->posts.ID 
     ORDER BY count($wpdb->comments.comment_ID) DESC";
 
-  $getUncommentedPostsQuery = "SELECT ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'";
+  $getUncommentedPostsQuery = "SELECT posts.ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts AS posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'";
 
   //echo "about to call query: $query<br/>";
   $commented_posts = $wpdb->get_results($getCommentedPostsQuery , ARRAY_A);
