@@ -8,15 +8,15 @@ class RemarksCategories extends RemarksSegment {
     }
 
     private function renderCategoryMatrixRow($categoryIndex){
-        echo "<tr><td><a href='/?cat=" . $this->segmentData[$categoryIndex]['id'] . "'>" . $this->segmentData[$categoryIndex]['name'] . 
-          "</a></td><td>" . $this->segmentData[$categoryIndex]['count'] . " comments</td><td>" . $this->segmentData[$categoryIndex]['numPosts'] . "</td></tr>\n";
+        echo "<tr><td><a href='/?cat=" . $this->segment_data[$categoryIndex]['id'] . "'>" . $this->segment_data[$categoryIndex]['name'] .
+          "</a></td><td>" . $this->segment_data[$categoryIndex]['count'] . " comments</td><td>" . $this->segment_data[$categoryIndex]['numPosts'] . "</td></tr>\n";
     }
 
     public function renderMatrix(){
         echo "<div id='category_table'>\n\n";
         echo "<table class='centralise'>";
         echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
-        foreach($this->segmentData as $authorKey => $eachAuthor){
+        foreach($this->segment_data as $authorKey => $eachAuthor){
             $this->renderCategoryMatrixRow($authorKey);
         }
         echo "</table>\n\n";
@@ -51,9 +51,9 @@ class RemarksCategories extends RemarksSegment {
           $getCategoryNameSql = "SELECT name FROM $wpdb->terms WHERE term_id = " . $categoryIndex;
           $categoryName = $wpdb->get_results($getCategoryNameSql , ARRAY_A);
 
-          $this->segmentData[] = array('name' => $categoryName[0]['name'], 'count' => $category['commentCount'], 'id' => $categoryIndex, 'numPosts' => $category['numPosts']);
+          $this->segment_data[] = array('name' => $categoryName[0]['name'], 'count' => $category['commentCount'], 'id' => $categoryIndex, 'numPosts' => $category['numPosts']);
         }
 
-        usort($this->segmentData, 'self::reorder');
+        usort($this->segment_data, 'self::reorder');
     }
 }

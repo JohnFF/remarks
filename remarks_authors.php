@@ -24,18 +24,18 @@ class RemarksAuthors extends RemarksSegment {
                 $numComments += $this->remarksPosts[$post['ID']]['count'];
         }
 
-        $this->segmentData[] = array('numPosts' => $numPosts, 'count' => $numComments, 'name' => $authorName, 'id' => $authorID);
+        $this->segment_data[] = array('numPosts' => $numPosts, 'count' => $numComments, 'name' => $authorName, 'id' => $authorID);
     }
 
     private function renderAuthorMatrixRow($authorIndex){
-        echo "<tr><td><a href = '".get_bloginfo('url')."/?author=" . $this->segmentData[$authorIndex]['id'] . "'>".$this->segmentData[$authorIndex]['name']."</a></td><td>". $this->segmentData[$authorIndex]['count']." comments</td><td>".$this->segmentData[$authorIndex]['numPosts']." posts</td></tr>\n";
+        echo "<tr><td><a href = '".get_bloginfo('url')."/?author=" . $this->segment_data[$authorIndex]['id'] . "'>".$this->segment_data[$authorIndex]['name']."</a></td><td>". $this->segment_data[$authorIndex]['count']." comments</td><td>".$this->segment_data[$authorIndex]['numPosts']." posts</td></tr>\n";
     }
 
     public function renderMatrix(){
         echo "<div id='author_table'>\n\n";
         echo "<table id='author_table' class='centralise'>";
         echo "<tr><td><strong>Post Author</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</strong></td></tr>\n";
-        foreach($this->segmentData as $authorIndex => $eachAuthor){
+        foreach($this->segment_data as $authorIndex => $eachAuthor){
             $this->renderAuthorMatrixRow($authorIndex);
         }
         echo "</table>\n\n";
@@ -51,6 +51,6 @@ class RemarksAuthors extends RemarksSegment {
         foreach ($authors as $eachAuthor){
                 $this->populateAuthorMatrixRow($eachAuthor['ID'], $eachAuthor['display_name']);
         }
-        usort($this->segmentData, 'self::reorder');
+        usort($this->segment_data, 'self::reorder');
     }
 }

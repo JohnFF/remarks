@@ -20,10 +20,10 @@ class RemarksPosts extends RemarksSegment {
 
   private function renderPostMatrixRow($id){
     echo "<tr>\n";
-    echo "\t<td><a href='".$this->segmentData[$id]['guid']."' >".$this->segmentData[$id]['title']. "</a></td>\n";
-    echo "\t<td align='center'>". $this->segmentData[$id]['count']." comments</td>\n";
-    echo "\t<td>".$this->categoriesLinks($this->segmentData[$id]['categories'])."</td>\n";
-    echo "\t<td align='center'><a href = '".get_bloginfo('url')."/?author=" . $this->segmentData[$id]['author'] . "'>".$this->segmentData[$id]['author_name']."</a></td>\n";
+    echo "\t<td><a href='".$this->segment_data[$id]['guid']."' >".$this->segment_data[$id]['title']. "</a></td>\n";
+    echo "\t<td align='center'>". $this->segment_data[$id]['count']." comments</td>\n";
+    echo "\t<td>".$this->categoriesLinks($this->segment_data[$id]['categories'])."</td>\n";
+    echo "\t<td align='center'><a href = '".get_bloginfo('url')."/?author=" . $this->segment_data[$id]['author'] . "'>".$this->segment_data[$id]['author_name']."</a></td>\n";
     echo "</tr>\n";
   }
 
@@ -32,7 +32,7 @@ public function render(){
       echo "<div id='post_div' class='startHidden'>";
     echo "<table>";
     echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
-	foreach ($this->segmentData as $eachPostIndex => $eachPost){
+	foreach ($this->segment_data as $eachPostIndex => $eachPost){
 		$this->renderPostMatrixRow( $eachPostIndex);
 	}
     echo "</table>\n\n";
@@ -49,7 +49,7 @@ private function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $n
 		$title = substr($title, 0, self::POST_TITLE_MAX_LENGTH) . '...';
 	}
 
-  $this->segmentData[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
+  $this->segment_data[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
 }
 
 
@@ -82,18 +82,18 @@ private function populatePostMatrix(){
     }
   }
 
-  usort($this->segmentData, 'self::reorder');
+  usort($this->segment_data, 'self::reorder');
 
 } // populatePostMatrix()
 
 public function getHighestStat() {
 	// This behaves slightly differently, as currently $this->remarksPosts is indexed by the post ID.
-	$unindexedValues = array_values($this->segmentData); // Resets the indices to 0, 1, 2 etc.
+	$unindexedValues = array_values($this->segment_data); // Resets the indices to 0, 1, 2 etc.
 	return $unindexedValues[0];
 }
 
 public function getPosts() {
-  return $this->segmentData;
+  return $this->segment_data;
 }
 
 }

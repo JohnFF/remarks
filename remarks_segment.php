@@ -13,12 +13,12 @@
  */
 class RemarksSegment {
   
-    protected $segmentType;
-    protected $segmentData;
+    private $segment_type;
+    protected $segment_data;
   
     protected function __construct($classType){
-        $this->segmentType = $classType;
-		$this->segmentData = array();
+        $this->segment_type = $classType;
+		$this->segment_data = array();
     }
 
     protected static function reorder($a, $b) {
@@ -29,7 +29,7 @@ class RemarksSegment {
     }
 
     protected function drawBars(){
-        echo "<svg width='1000' height='500' id='" . $this->segmentType . "_bar' class='startHidden'></svg>
+        echo "<svg width='1000' height='500' id='" . $this->segment_type . "_bar' class='startHidden'></svg>
             <script src='http://d3js.org/d3.v3.min.js'></script>
             <script>
 InitChart();
@@ -38,16 +38,16 @@ function InitChart() {
 
   var barData = [";
 
-            foreach ($this->segmentData as $key => $category){
+            foreach ($this->segment_data as $key => $category){
                 echo "{ x: '" . $category['name'] . "', y: " . $category['count'] . "}";
-                if ($key <= count($this->segmentData) ){
+                if ($key <= count($this->segment_data) ){
                     echo ",";
                 }
             }
 
             echo "];
 
-  var vis = d3.select('#" . $this->segmentType . "_bar'),
+  var vis = d3.select('#" . $this->segment_type . "_bar'),
     WIDTH = 1000,
     HEIGHT = 500,
     MARGINS = {
@@ -119,7 +119,7 @@ function InitChart() {
     }
 
     protected function drawPie(){
-        echo '<div id="' . $this->segmentType . '_pie" class="startHidden" ></div>
+        echo '<div id="' . $this->segment_type . '_pie" class="startHidden" ></div>
             <script src="http://wordpress/d3.min.js"></script><!-- TODO FIX SCRIPT LOCATION -->
             <script>
 
@@ -128,9 +128,9 @@ function InitChart() {
 
             var dataset = [';
 
-            foreach ($this->segmentData as $key => $category){
+            foreach ($this->segment_data as $key => $category){
                 echo "{ label: '" . $category['name'] . "', count: " . $category['count'] . "}";
-                if ($key <= count($this->segmentData) ){
+                if ($key <= count($this->segment_data) ){
                     echo ",";
                 }
             }
@@ -144,7 +144,7 @@ function InitChart() {
 
             var color = d3.scale.category20b();
 
-            var svg = d3.select("#' . $this->segmentType . '_pie")
+            var svg = d3.select("#' . $this->segment_type . '_pie")
               .append("svg")
               .attr("width", width)
               .attr("height", height)
@@ -174,12 +174,12 @@ function InitChart() {
     }
 
    public function getHighestStat(){
-     return $this->segmentData[0]; // has been reordered so that highest is at the top.
+     return $this->segment_data[0]; // has been reordered so that highest is at the top.
    }
 
     public function render(){
-        echo "<div id='" . $this->segmentType . "_div' class='startHidden'>";
-        RemarksInterface::remarks_renderNavigationOptions($this->segmentType);
+        echo "<div id='" . $this->segment_type . "_div' class='startHidden'>";
+        RemarksInterface::remarks_renderNavigationOptions($this->segment_type);
         echo "<br/>";
         $this->renderMatrix();
         echo '<br/>';
