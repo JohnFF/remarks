@@ -46,7 +46,7 @@ private function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $n
 	$title_length = strlen($title);
 
 	if ($title_length >= self::POST_TITLE_MAX_LENGTH) {
-		$title = substr($title, 0, self::POST_TITLE_MAX_LENGTH);
+		$title = substr($title, 0, self::POST_TITLE_MAX_LENGTH) . '...';
 	}
 
   $this->segmentData[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
