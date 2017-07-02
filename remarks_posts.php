@@ -4,96 +4,93 @@ class RemarksPosts extends RemarksSegment {
 
 	const POST_TITLE_MAX_LENGTH = 50;
 
-  public function __construct() {
-
-    parent::__construct('post');
-	$this->populatePostMatrix();
-  }
-
-  private function categoriesLinks($arrayOfCategoryIndices){
-    $outputString = "";
-    foreach ($arrayOfCategoryIndices as $categoryIndex){
-	    $outputString .= "<a href='" . get_category_link($categoryIndex) . "'>" . get_cat_name($categoryIndex) .  "</a>, ";
-    }
-    return substr($outputString, 0, strlen($outputString)-2);
-  }
-
-  private function renderPostMatrixRow($id){
-    echo "<tr>\n";
-    echo "\t<td><a href='".$this->segment_data[$id]['guid']."' >".$this->segment_data[$id]['title']. "</a></td>\n";
-    echo "\t<td align='center'>". $this->segment_data[$id]['count']." comments</td>\n";
-    echo "\t<td>".$this->categoriesLinks($this->segment_data[$id]['categories'])."</td>\n";
-    echo "\t<td align='center'><a href = '".get_bloginfo('url')."/?author=" . $this->segment_data[$id]['author'] . "'>".$this->segment_data[$id]['author_name']."</a></td>\n";
-    echo "</tr>\n";
-  }
-
-
-public function render(){
-      echo "<div id='post_div' class='startHidden'>";
-    echo "<table>";
-    echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
-	foreach ($this->segment_data as $eachPostIndex => $eachPost){
-		$this->renderPostMatrixRow( $eachPostIndex);
-	}
-    echo "</table>\n\n";
-    echo "<br/>";
-    echo "</div>";
-}
-
-
-private function addPostMatrixRow($id, $title, $guid, $authorId, $authorName, $numComments ){
-
-	$title_length = strlen($title);
-
-	if ($title_length >= self::POST_TITLE_MAX_LENGTH) {
-		$title = substr($title, 0, self::POST_TITLE_MAX_LENGTH) . '...';
+	public function __construct() {
+		parent::__construct( 'post' );
+		$this->populate_post_matrix();
 	}
 
-  $this->segment_data[$id] = array( 'title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories($id), 'author' => $authorId, 'author_name' => $authorName, 'count' => $numComments);
-}
+	private function categories_links( $array_of_category_indices ) {
+		$output_string = "";
+		foreach ( $array_of_category_indices as $category_index ) {
+			$output_string .= "<a href='" . get_category_link( $category_index ) . "'>" . get_cat_name( $category_index ) . "</a>, ";
+		}
+		return substr( $output_string, 0, strlen( $output_string ) - 2 );
+	}
 
+	private function render_post_matrix_row( $id ) {
+		echo "<tr>\n";
+		echo "\t<td><a href='" . $this->segment_data[$id]['guid'] . "' >" . $this->segment_data[$id]['title'] . "</a></td>\n";
+		echo "\t<td align='center'>" . $this->segment_data[$id]['count'] . " comments</td>\n";
+		echo "\t<td>" . $this->categories_links( $this->segment_data[$id]['categories'] ) . "</td>\n";
+		echo "\t<td align='center'><a href = '" . get_bloginfo( 'url' ) . "/?author=" . $this->segment_data[$id]['author'] . "'>" . $this->segment_data[$id]['author_name'] . "</a></td>\n";
+		echo "</tr>\n";
+	}
 
-private function populatePostMatrix(){
-  global $wpdb;
+	public function render() {
+		echo "<div id='post_div' class='startHidden'>";
+		echo "<table>";
+		echo "<tr><td><strong>Post Name</strong></td><td><strong>Number of Comments</strong></td><td><strong>Category(s)</strong></td><td><strong>Author</strong></td></tr>\n";
+		foreach ( $this->segment_data as $each_postIndex => $each_post ) {
+			$this->render_post_matrix_row( $each_postIndex );
+		}
+		echo "</table>\n\n";
+		echo "<br/>";
+		echo "</div>";
+	}
 
-  $getCommentedPostsQuery = "SELECT $wpdb->posts.ID as post_ID, $wpdb->posts.post_title, $wpdb->posts.post_author, $wpdb->users.display_name AS 'author_name', $wpdb->posts.guid, count($wpdb->comments.comment_ID) AS 'count'
-    FROM $wpdb->posts LEFT JOIN $wpdb->comments ON $wpdb->posts.ID=$wpdb->comments.comment_post_id LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID
-    WHERE post_status = 'publish' AND $wpdb->comments.comment_approved='1'
-    GROUP BY $wpdb->posts.ID
-    ORDER BY count($wpdb->comments.comment_ID) DESC";
+	private function add_post_matrix_row( $id, $title, $guid, $author_id, $author_name, $num_comments ) {
 
-  $getUncommentedPostsQuery = "SELECT $wpdb->posts.ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'";
+		$title_length = strlen( $title );
 
-  //echo "about to call query: $query<br/>";
-  $commented_posts = $wpdb->get_results($getCommentedPostsQuery , ARRAY_A);
+		if ( $title_length >= self::POST_TITLE_MAX_LENGTH ) {
+			$title = substr( $title, 0, self::POST_TITLE_MAX_LENGTH ) . '...';
+		}
 
-  // TODO produce query of posts with no comments
-  if ($commented_posts != FALSE){
-    foreach($commented_posts as $eachPost){
-      $getUncommentedPostsQuery = $getUncommentedPostsQuery." AND post_ID != ".$eachPost['post_ID'];
-      $this->addPostMatrixRow($eachPost['post_ID'], $eachPost['post_title'], $eachPost['guid'], $eachPost['post_author'], $eachPost['author_name'], $eachPost['count'] );
-    }
-  }
+		$this->segment_data[$id] = array('title' => $title, 'guid' => $guid, 'categories' => wp_get_post_categories( $id ), 'author' => $author_id, 'author_name' => $author_name, 'count' => $num_comments);
+	}
 
-  $uncommented_posts = $wpdb->get_results($getUncommentedPostsQuery , ARRAY_A);
-  if ($uncommented_posts != FALSE){
-    foreach($uncommented_posts as $eachPost){
-      $this->addPostMatrixRow($eachPost['post_ID'], $eachPost['post_title'], $eachPost['guid'], $eachPost['post_author'], $eachPost['author_name'], '0' );
-    }
-  }
+	private function populate_post_matrix() {
+		global $wpdb;
 
-  usort($this->segment_data, 'self::reorder');
+		$get_commented_posts_query = "SELECT $wpdb->posts.ID as post_ID, $wpdb->posts.post_title, $wpdb->posts.post_author, $wpdb->users.display_name AS 'author_name', $wpdb->posts.guid, count($wpdb->comments.comment_ID) AS 'count'
+			FROM $wpdb->posts LEFT JOIN $wpdb->comments ON $wpdb->posts.ID=$wpdb->comments.comment_post_id LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID
+			WHERE post_status = 'publish' AND $wpdb->comments.comment_approved='1'
+			GROUP BY $wpdb->posts.ID
+			ORDER BY count($wpdb->comments.comment_ID) DESC";
 
-} // populatePostMatrix()
+		$get_uncommented_posts_query = "SELECT $wpdb->posts.ID as post_ID, post_title, guid, post_author, $wpdb->users.display_name AS 'author_name' FROM $wpdb->posts LEFT JOIN $wpdb->users ON $wpdb->posts.post_author = $wpdb->users.ID WHERE post_status = 'publish'";
 
-public function getHighestStat() {
-	// This behaves slightly differently, as currently $this->remarksPosts is indexed by the post ID.
-	$unindexedValues = array_values($this->segment_data); // Resets the indices to 0, 1, 2 etc.
-	return $unindexedValues[0];
-}
+		//echo "about to call query: $query<br/>";
+		$commented_posts = $wpdb->get_results( $get_commented_posts_query, ARRAY_A );
 
-public function getPosts() {
-  return $this->segment_data;
-}
+		// TODO produce query of posts with no comments
+		if ( $commented_posts != FALSE ) {
+			foreach ( $commented_posts as $each_post ) {
+				$get_uncommented_posts_query = $get_uncommented_posts_query . " AND post_ID != " . $each_post['post_ID'];
+				$this->add_post_matrix_row( $each_post['post_ID'], $each_post['post_title'], $each_post['guid'], $each_post['post_author'], $each_post['author_name'], $each_post['count'] );
+			}
+		}
+
+		$uncommented_posts = $wpdb->get_results( $get_uncommented_posts_query, ARRAY_A );
+		if ( $uncommented_posts != FALSE ) {
+			foreach ( $uncommented_posts as $each_post ) {
+				$this->add_post_matrix_row( $each_post['post_ID'], $each_post['post_title'], $each_post['guid'], $each_post['post_author'], $each_post['author_name'], '0' );
+			}
+		}
+
+		usort( $this->segment_data, 'self::reorder' );
+	}
+
+// populate_post_matrix()
+
+	public function get_highest_stat() {
+		// This behaves slightly differently, as currently $this->remarksPosts is indexed by the post ID.
+		$unindexed_values = array_values( $this->segment_data ); // Resets the indices to 0, 1, 2 etc.
+		return $unindexed_values[0];
+	}
+
+	public function get_posts() {
+		return $this->segment_data;
+	}
 
 }

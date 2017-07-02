@@ -2,14 +2,14 @@
 
 class RemarksOverview {
 
-  private $totalComments;
+  private $total_comments;
   private $postsHighestStat;
   private $categoryHighestStat;
   private $authorHighestStat;
   private $countriesHighestStat;
 
-  function __construct($totalComments, $postsHighestStat, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
-    $this->totalComments = $totalComments;
+  function __construct($total_comments, $postsHighestStat, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
+    $this->total_comments = $total_comments;
     $this->postsHighestStat = $postsHighestStat;
     $this->categoryHighestStat = $categoryHighestStat;
     $this->authorHighestStat = $authorHighestStat;
@@ -19,11 +19,11 @@ class RemarksOverview {
   function render() {
     echo "<div id='overview_div'>";
 
-    if($this->totalComments == 0){
+    if($this->total_comments == 0){
       echo "You haven't approved any comments yet! Please check back when some have been approved.<br/></div>";  
       return;
     }
-    echo $this->totalComments . " approved comments in total.<br/>";
+    echo $this->total_comments . " approved comments in total.<br/>";
 
     echo "<br/>
       <h5>Most commented Post:</h5>

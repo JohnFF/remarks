@@ -2,217 +2,208 @@
 
 class RemarksGlobe { // For common functionality, although there isn't much.
 
-  private $longlats;
-  private $countries;
-  private $countries_top;
+	private $longlats;
+	private $countries;
+	private $countries_top;
 
 // TODO add common city list
-
 // TODO add google API fallthrough
 
-  public function __construct() {
-    $this->longlats = array();
-    $this->countries = array();
-    $this->countries_top = array();
+	public function __construct() {
+		$this->longlats = array();
+		$this->countries = array();
+		$this->countries_top = array();
 
-    self::globe_Initialise();
-    $this->populateCityByComments();
-  }
+		self::initialise_remarks_table();
+		$this->populate_city_by_comments();
+	}
 
-private function addLongLatsToMatrix($long, $lat){
-	
-	if (array_key_exists($long, $this->longlats)){
-		if (array_key_exists($lat, $this->longlats[$long])){
-			$this->longlats[$long][$lat]++;
-			RETURN -1;
+	private function add_coordinates( $long, $lat ) {
+
+		if ( array_key_exists( $long, $this->longlats ) ) {
+			if ( array_key_exists( $lat, $this->longlats[$long] ) ) {
+				$this->longlats[$long][$lat] ++;
+				RETURN -1;
+			}
+		}
+
+		// fallthrough
+
+		$this->longlats[$long] = array($lat => 1);
+	}
+
+	private function strip_country( $raw_country ) {
+		return ucwords( strtolower( substr( $raw_country, 0, strpos( $raw_country, " (" ) ) ) );
+	}
+
+	private function Geolocation_InsertCommentLocation( $commentID, $country, $city, $latitude, $longitude ) {
+		global $wpdb;
+
+		$sql = "INSERT INTO `" . $wpdb->prefix . "remarks_comments` VALUES ($commentID" . ', \'' . $city . '\', \'' . $country . '\', ' . $latitude . ', ' . $longitude . ')';
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		dbDelta( $sql );
+
+		if ( ($latitude != 0.0) || ($longitude != 0.0) ) {
+			$this->add_coordinates( $longitude, $latitude );
 		}
 	}
-	
-	// fallthrough
-	
-	$this->longlats[$long]= array($lat => 1);
-}
 
+	private function Geolocation_RegisterCountry( $country ) {
 
-private function stripCountry($raw_country){
-	return ucwords(strtolower(substr($raw_country, 0, strpos($raw_country, " ("))));
-}
-
-private function Geolocation_InsertCommentLocation($commentID, $country, $city, $latitude, $longitude){
-  global $wpdb;
-
-	$sql = "INSERT INTO `" . $wpdb->prefix . "remarks_comments` VALUES ($commentID".', \''.$city.'\', \''.$country.'\', '.$latitude.', '.$longitude.')';
-	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	dbDelta($sql);
-
-     if (($latitude != 0.0) || ($longitude != 0.0)){
-          $this->addLongLatsToMatrix($longitude, $latitude);
-     }
-
-}
-
-private function Geolocation_RegisterCountry($country){
-
-    // 3. see if that city and country exists
-    if (array_key_exists($country, $this->countries)){
-        // 3b. otherwise increase that city and country's value by 1
-	$this->countries[$country] ++;
-    } else {
-        // 3a. if that city and country doesn't exist, create a key in an array for that city and country, and set its number to 1
-	$this->countries[$country] = 1;
-    }
-}
-
-private function IPtoLocationEntry_HostIP($commentIndex, $eachIP){
-    
-    // thanks Dan Grossman of Stack Overflow!
-    $response = file("http://api.hostip.info/get_html.php?ip=$eachIP&position=true");
-    
-    IF( strpos($response[0], "(XX)") != FALSE ){
-    	RETURN -1;
-    }
-    
-    foreach ($response as $line) {
-	$line = trim($line);
-	    if (!empty($line)) {
-		$parts = explode(': ', $line);
-		if (array_key_exists(1, $parts)){
-			$result[$parts[0]] = $parts[1];
+		// 3. see if that city and country exists
+		if ( array_key_exists( $country, $this->countries ) ) {
+			// 3b. otherwise increase that city and country's value by 1
+			$this->countries[$country] ++;
+		} else {
+			// 3a. if that city and country doesn't exist, create a key in an array for that city and country, and set its number to 1
+			$this->countries[$country] = 1;
 		}
-	    }
-    }
-    
-    $strippedCountry = $this->stripCountry($result['Country']);
-    
-    $this->Geolocation_RegisterCountry($strippedCountry);
-    
-     // 5. add any longlats to the longlatlist
-  if (array_key_exists('Longitude', $result) && array_key_exists('Latitude', $result)){ // 5a. use the ones from hpinfo
-      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], $result['Latitude'], $result['Longitude']);
+	}
 
-	} elseif(array_key_exists('City', $result) && array_key_exists('Country', $result)){
-      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, $result['City'], 0.0, 0.0);
-		
-	} elseif(array_key_exists('Country', $result)){
-      $this->Geolocation_InsertCommentLocation($commentIndex, $strippedCountry, "?", 0.0, 0.0);
-    }
-}
+	private function IPtoLocationEntry_HostIP( $commentIndex, $eachIP ) {
 
-private function IPtoLocationEntry_FreeGeoIp($commentIndex, $eachIP){
+		// thanks Dan Grossman of Stack Overflow!
+		$response = file( "http://api.hostip.info/get_html.php?ip=$eachIP&position=true" );
 
-     $response_raw = file("http://freegeoip.net/csv/$eachIP");
-     
-     $responseArray = str_getcsv($response_raw['0']);
-     $country = $responseArray['2'];
-     $city = $responseArray['5'];
-     $latitude = $responseArray['8'];
-     $longitude = $responseArray['9'];
-     
-     $this->Geolocation_RegisterCountry($country);
-     
-     $this->Geolocation_InsertCommentLocation($commentIndex, $country, $city, $latitude, $longitude);
-}
+		IF ( strpos( $response[0], "(XX)" ) != FALSE ) {
+			RETURN -1;
+		}
 
-	public static function onPostDeletion($commentID){
+		foreach ( $response as $line ) {
+			$line = trim( $line );
+			if ( !empty( $line ) ) {
+				$parts = explode( ': ', $line );
+				if ( array_key_exists( 1, $parts ) ) {
+					$result[$parts[0]] = $parts[1];
+				}
+			}
+		}
+
+		$strippedCountry = $this->strip_country( $result['Country'] );
+
+		$this->Geolocation_RegisterCountry( $strippedCountry );
+
+		// 5. add any longlats to the longlatlist
+		if ( array_key_exists( 'Longitude', $result ) && array_key_exists( 'Latitude', $result ) ) { // 5a. use the ones from hpinfo
+			$this->Geolocation_InsertCommentLocation( $commentIndex, $strippedCountry, $result['City'], $result['Latitude'], $result['Longitude'] );
+		} elseif ( array_key_exists( 'City', $result ) && array_key_exists( 'Country', $result ) ) {
+			$this->Geolocation_InsertCommentLocation( $commentIndex, $strippedCountry, $result['City'], 0.0, 0.0 );
+		} elseif ( array_key_exists( 'Country', $result ) ) {
+			$this->Geolocation_InsertCommentLocation( $commentIndex, $strippedCountry, "?", 0.0, 0.0 );
+		}
+	}
+
+	private function IPtoLocationEntry_FreeGeoIp( $commentIndex, $eachIP ) {
+
+		$response_raw = file( "http://freegeoip.net/csv/$eachIP" );
+
+		$responseArray = str_getcsv( $response_raw['0'] );
+		$country = $responseArray['2'];
+		$city = $responseArray['5'];
+		$latitude = $responseArray['8'];
+		$longitude = $responseArray['9'];
+
+		$this->Geolocation_RegisterCountry( $country );
+
+		$this->Geolocation_InsertCommentLocation( $commentIndex, $country, $city, $latitude, $longitude );
+	}
+
+	public static function on_post_deletion( $commentID ) {
 		global $wpdb;
 
 		$sql = "DELETE
 			FROM       `" . $wpdb->prefix . "remarks_comments`
 			WHERE      comment_ID = '$commentID'";
 
-		$wpdb->query($sql);
+		$wpdb->query( $sql );
 	}
 
-	public static function onPostCreation($commentID){
+	public static function on_post_creation( $commentID ) {
 		global $wpdb;
 
 		$sql = "SELECT  comment_author_IP
 			FROM       `$wpdb->comments`
 			WHERE      comment_ID = '$commentID'";
 
-		$rawIP = $wpdb->get_results($sql , ARRAY_A);
+		$rawIP = $wpdb->get_results( $sql, ARRAY_A );
 
-		IPtoLocationEntry_FreeGeoIp($commentID, $rawIP[0]['comment_author_IP']);
+		IPtoLocationEntry_FreeGeoIp( $commentID, $rawIP[0]['comment_author_IP'] );
 	}
 
-private function updateTableRecords(){
+	private function update_table_records() {
 
-    global $wpdb;
+		global $wpdb;
 
-    $sql = "SELECT     a.comment_ID, a.comment_author_IP 
+		$sql = "SELECT     a.comment_ID, a.comment_author_IP
 	    FROM       `$wpdb->comments` AS a
 	    WHERE      NOT EXISTS (SELECT * FROM `" . $wpdb->prefix . "remarks_comments` AS b WHERE b.comment_ID = a.comment_ID)  AND a.comment_approved='1'";
 
-    $uninterpretedComments = $wpdb->get_results($sql , ARRAY_A);
+		$uninterpretedComments = $wpdb->get_results( $sql, ARRAY_A );
 
-    foreach ($uninterpretedComments as $eachComment){
-	/*IPtoLocationEntry_HostIP($eachComment['comment_ID'], $eachComment['comment_author_IP']);*/
-	$this->IPtoLocationEntry_FreeGeoIp($eachComment['comment_ID'], $eachComment['comment_author_IP']);
-    }
-
-}
-
-private function populateCityByComments(){
-    global $wpdb;
-
-    // 0. retrieve the data
-    $retrieveComments = "SELECT * FROM `" . $wpdb->prefix . "remarks_comments` WHERE 1";
-    $retrieveCountry = "SELECT COUNTRY, COUNT(COUNTRY) AS COUNT FROM `" . $wpdb->prefix . "remarks_comments` WHERE COUNTRY != '' GROUP BY COUNTRY";
-
-    // 1. iterate through each comment
-    $commentDetails = $wpdb->get_results($retrieveComments, ARRAY_A);	
-    $countryDetails = $wpdb->get_results($retrieveCountry, ARRAY_A);
-    
-    // 2. for each comment, divide the IP address into the city and country
-    foreach ($countryDetails as $eachCountry){
-      $this->countries[$eachCountry['COUNTRY']] = $eachCountry['COUNT'];
-      RemarksSegment::remarks_handle_biggest_source($this->countries_top['label'], $this->countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT']);
-    }
-    
-    foreach ($commentDetails as $eachComment){
-    	if (($eachComment['longitude'] > 0 || $eachComment['longitude'] < 0) && ($eachComment['latitude'] > 0 || $eachComment['latitude'] < 0)){
-		$this->addLongLatsToMatrix($eachComment['longitude'], $eachComment['latitude']);
-	}
-    }
-    
-    $this->updateTableRecords();
-    // 4. order by count
-    arsort($this->countries);
-}
-
-
-function renderGeolocationCommentsTable(){
-    // draw a table of each city by the number of comments it has
-	echo "<table id='geolocate_table'>\n";
-    	echo "\t<tr><td><strong>Location</strong></a></td><td><strong>Number of Comments</strong></td></tr>\n";
-        foreach($this->countries as $countryKey => $eachCountry){
-		echo "\t<tr><td>$countryKey</td><td align='center'>$eachCountry</td></tr>\n";
-	}
-	echo "\n</table>\n";
-	
-}
-
-function renderMapByComments(){
-    
-   // draw a map
-    echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
-	foreach($this->longlats as $long => $pair){
-		foreach($pair as $lat => $count){
-			echo "&markers=color:blue|label:$count|$lat,$long";
+		foreach ( $uninterpretedComments as $eachComment ) {
+			/* IPtoLocationEntry_HostIP($eachComment['comment_ID'], $eachComment['comment_author_IP']); */
+			$this->IPtoLocationEntry_FreeGeoIp( $eachComment['comment_ID'], $eachComment['comment_author_IP'] );
 		}
 	}
-    echo '&sensor=false"/><br/><br/>';
-}
 
+	private function populate_city_by_comments() {
+		global $wpdb;
 
-public static function globe_Initialise(){
-  global $wpdb;
+		// 0. retrieve the data
+		$retrieveComments = "SELECT * FROM `" . $wpdb->prefix . "remarks_comments` WHERE 1";
+		$retrieveCountry = "SELECT COUNTRY, COUNT(COUNTRY) AS COUNT FROM `" . $wpdb->prefix . "remarks_comments` WHERE COUNTRY != '' GROUP BY COUNTRY";
 
-    // if the table doesn't exist, create it
+		// 1. iterate through each comment
+		$commentDetails = $wpdb->get_results( $retrieveComments, ARRAY_A );
+		$countryDetails = $wpdb->get_results( $retrieveCountry, ARRAY_A );
 
-   $table_name = $wpdb->prefix . "remarks_comments"; 
+		// 2. for each comment, divide the IP address into the city and country
+		foreach ( $countryDetails as $eachCountry ) {
+			$this->countries[$eachCountry['COUNTRY']] = $eachCountry['COUNT'];
+			RemarksSegment::remarks_handle_biggest_source( $this->countries_top['label'], $this->countries_top['count'], $eachCountry['COUNTRY'], $eachCountry['COUNT'] );
+		}
 
-	$sql = "CREATE TABLE " . $table_name . " (
+		foreach ( $commentDetails as $eachComment ) {
+			if ( ($eachComment['longitude'] > 0 || $eachComment['longitude'] < 0) && ($eachComment['latitude'] > 0 || $eachComment['latitude'] < 0) ) {
+				$this->add_coordinates( $eachComment['longitude'], $eachComment['latitude'] );
+			}
+		}
+
+		$this->update_table_records();
+		// 4. order by count
+		arsort( $this->countries );
+	}
+
+	function render_geolocation_comments_table() {
+		// draw a table of each city by the number of comments it has
+		echo "<table id='geolocate_table'>\n";
+		echo "\t<tr><td><strong>Location</strong></a></td><td><strong>Number of Comments</strong></td></tr>\n";
+		foreach ( $this->countries as $countryKey => $eachCountry ) {
+			echo "\t<tr><td>$countryKey</td><td align='center'>$eachCountry</td></tr>\n";
+		}
+		echo "\n</table>\n";
+	}
+
+	function render_map_by_comments() {
+
+		// draw a map
+		echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
+		foreach ( $this->longlats as $long => $pair ) {
+			foreach ( $pair as $lat => $count ) {
+				echo "&markers=color:blue|label:$count|$lat,$long";
+			}
+		}
+		echo '&sensor=false"/><br/><br/>';
+	}
+
+	public static function initialise_remarks_table() {
+		global $wpdb;
+
+		// if the table doesn't exist, create it
+
+		$table_name = $wpdb->prefix . "remarks_comments";
+
+		$sql = "CREATE TABLE " . $table_name . " (
 	  comment_id mediumint(9) NOT NULL,
 	  city text NOT NULL,
 	  country text NOT NULL,
@@ -221,31 +212,29 @@ public static function globe_Initialise(){
 	  UNIQUE KEY comment_id (comment_id)
 	);";
 
-require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-dbDelta($sql);
+		dbDelta( $sql );
+	}
 
-}
-
-public function render() {
-echo "<div id='geolocate_div' class='startHidden'>
+	public function render() {
+		echo "<div id='geolocate_div' class='startHidden'>
     <div id='geolocate_table_div'>";
-      $this->renderGeolocationCommentsTable();
-echo "</div>
+		$this->render_geolocation_comments_table();
+		echo "</div>
     <div id='geolocate_map_div'>";
-      $this->renderMapByComments();
-echo "</div><br/>
+		$this->render_map_by_comments();
+		echo "</div><br/>
 <em>Geolocation powered by <a href='http://www.freegeoip.net/'>FreeGeoIP</a>.</em><br/>
 <em>Map powered by <a href='http://lmgtfy.com/?q=google+map+api'>Google Map API</a>.</em><br/>
 <em>Unfortunately, the above map may be missing the locations of some of your comments. This is because sometimes it's impossible to translate the IP address into a geographic location.</em>
 </div>";
+	}
 
-
-}
-
-   public function getHighestStat(){
-     return $this->countriesTop; // has been reordered so that highest is at the top.
-   }
+	public function get_highest_stat() {
+		return $this->countries_top; // has been reordered so that highest is at the top.
+	}
 
 }
+
 ?>

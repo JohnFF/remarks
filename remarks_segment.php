@@ -12,24 +12,24 @@
  * @author john
  */
 class RemarksSegment {
-  
-    private $segment_type;
-    protected $segment_data;
-  
-    protected function __construct($classType){
-        $this->segment_type = $classType;
+
+	private $segment_type;
+	protected $segment_data;
+
+	protected function __construct( $classType ) {
+		$this->segment_type = $classType;
 		$this->segment_data = array();
-    }
+	}
 
-    protected static function reorder($a, $b) {
-        if ($a['count'] == $b['count']) {
-            return 0;
-        }
-        return ($a['count'] > $b['count']) ? -1 : 1;
-    }
+	protected static function reorder( $a, $b ) {
+		if ( $a['count'] == $b['count'] ) {
+			return 0;
+		}
+		return ($a['count'] > $b['count']) ? -1 : 1;
+	}
 
-    protected function drawBars(){
-        echo "<svg width='1000' height='500' id='" . $this->segment_type . "_bar' class='startHidden'></svg>
+	protected function draw_bars() {
+		echo "<svg width='1000' height='500' id='" . $this->segment_type . "_bar' class='startHidden'></svg>
             <script src='http://d3js.org/d3.v3.min.js'></script>
             <script>
 InitChart();
@@ -38,14 +38,14 @@ function InitChart() {
 
   var barData = [";
 
-            foreach ($this->segment_data as $key => $category){
-                echo "{ x: '" . $category['name'] . "', y: " . $category['count'] . "}";
-                if ($key <= count($this->segment_data) ){
-                    echo ",";
-                }
-            }
+		foreach ( $this->segment_data as $key => $category ) {
+			echo "{ x: '" . $category['name'] . "', y: " . $category['count'] . "}";
+			if ( $key <= count( $this->segment_data ) ) {
+				echo ",";
+			}
+		}
 
-            echo "];
+		echo "];
 
   var vis = d3.select('#" . $this->segment_type . "_bar'),
     WIDTH = 1000,
@@ -109,17 +109,17 @@ function InitChart() {
         </script>";
 
 
-/*      $URL = home_url().'/wp-content/plugins/remarks/remarks_barchart.php?';
-        foreach ($this->remarks_categories as $category){
-            $URL = $URL.$category['name']."=".$category['count']."&";
-        }
-        $URL = $URL.'chart_title'."=Comment%20Breakdown%20By%20Category";
+		/*      $URL = home_url().'/wp-content/plugins/remarks/remarks_barchart.php?';
+		  foreach ($this->remarks_categories as $category){
+		  $URL = $URL.$category['name']."=".$category['count']."&";
+		  }
+		  $URL = $URL.'chart_title'."=Comment%20Breakdown%20By%20Category";
 
-        echo '<img id="category_bar" alt="Bar Chart of Posts by Categories" class="startHidden" src="'.$URL.'">';*/
-    }
+		  echo '<img id="category_bar" alt="Bar Chart of Posts by Categories" class="startHidden" src="'.$URL.'">'; */
+	}
 
-    protected function drawPie(){
-        echo '<div id="' . $this->segment_type . '_pie" class="startHidden" ></div>
+	protected function draw_pie() {
+		echo '<div id="' . $this->segment_type . '_pie" class="startHidden" ></div>
             <script src="http://wordpress/d3.min.js"></script><!-- TODO FIX SCRIPT LOCATION -->
             <script>
 
@@ -128,14 +128,14 @@ function InitChart() {
 
             var dataset = [';
 
-            foreach ($this->segment_data as $key => $category){
-                echo "{ label: '" . $category['name'] . "', count: " . $category['count'] . "}";
-                if ($key <= count($this->segment_data) ){
-                    echo ",";
-                }
-            }
+		foreach ( $this->segment_data as $key => $category ) {
+			echo "{ label: '" . $category['name'] . "', count: " . $category['count'] . "}";
+			if ( $key <= count( $this->segment_data ) ) {
+				echo ",";
+			}
+		}
 
-            echo '];
+		echo '];
 
             var width = 360;
             var height = 360;
@@ -171,32 +171,32 @@ function InitChart() {
 
             })(window.d3);
         </script>';
-    }
+	}
 
-   public function getHighestStat(){
-     return $this->segment_data[0]; // has been reordered so that highest is at the top.
-   }
+	public function get_highest_stat() {
+		return $this->segment_data[0]; // has been reordered so that highest is at the top.
+	}
 
-    public function render(){
-        echo "<div id='" . $this->segment_type . "_div' class='startHidden'>";
-        RemarksInterface::remarks_renderNavigationOptions($this->segment_type);
-        echo "<br/>";
-        $this->renderMatrix();
-        echo '<br/>';
-        $this->drawBars();
-        echo '<br/>';
-        $this->drawPie();
-        echo '<br/>';
-        echo '</div>';
-    }
+	public function render() {
+		echo "<div id='" . $this->segment_type . "_div' class='startHidden'>";
+		RemarksInterface::render_navigation_options( $this->segment_type );
+		echo "<br/>";
+		$this->render_matrix();
+		echo '<br/>';
+		$this->draw_bars();
+		echo '<br/>';
+		$this->draw_pie();
+		echo '<br/>';
+		echo '</div>';
+	}
 
-    public static function remarks_handle_biggest_source(&$biggestName, &$biggestNumber, $candidateName, $candidateNumber)
-     {
-        if($biggestNumber < $candidateNumber){
-          $biggestName = $candidateName;
-          $biggestNumber = $candidateNumber;
-        } elseif($biggestNumber == $candidateNumber) {
-          $biggestName = $biggestName.', '.$candidateName;
-        }
-     }
+	public static function remarks_handle_biggest_source( &$biggestName, &$biggestNumber, $candidateName, $candidateNumber ) {
+		if ( $biggestNumber < $candidateNumber ) {
+			$biggestName = $candidateName;
+			$biggestNumber = $candidateNumber;
+		} elseif ( $biggestNumber == $candidateNumber ) {
+			$biggestName = $biggestName . ', ' . $candidateName;
+		}
+	}
+
 }

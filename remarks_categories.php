@@ -1,59 +1,60 @@
 <?php
 
 class RemarksCategories extends RemarksSegment {
-  
-    public function __construct($remarksPostMatrix) {
-        parent::__construct('category');
-        $this->populateCategoryMatrix($remarksPostMatrix);
-    }
 
-    private function renderCategoryMatrixRow($categoryIndex){
-        echo "<tr><td><a href='/?cat=" . $this->segment_data[$categoryIndex]['id'] . "'>" . $this->segment_data[$categoryIndex]['name'] .
-          "</a></td><td>" . $this->segment_data[$categoryIndex]['count'] . " comments</td><td>" . $this->segment_data[$categoryIndex]['numPosts'] . "</td></tr>\n";
-    }
+	public function __construct( $remarks_post_matrix ) {
+		parent::__construct( 'category' );
+		$this->populate_category_matrix( $remarks_post_matrix );
+	}
 
-    public function renderMatrix(){
-        echo "<div id='category_table'>\n\n";
-        echo "<table class='centralise'>";
-        echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
-        foreach($this->segment_data as $authorKey => $eachAuthor){
-            $this->renderCategoryMatrixRow($authorKey);
-        }
-        echo "</table>\n\n";
-        echo "</div>\n\n";
-    }
+	private function render_category_matrix_row( $category_index ) {
+		echo "<tr><td><a href='/?cat=" . $this->segment_data[$category_index]['id'] . "'>" . $this->segment_data[$category_index]['name'] .
+		"</a></td><td>" . $this->segment_data[$category_index]['count'] . " comments</td><td>" . $this->segment_data[$category_index]['num_posts'] . "</td></tr>\n";
+	}
 
-    public function populateCategoryMatrix($remarksPostMatrix){
-        global $wpdb;
-        $categoryCountMatrix = array();
+	public function render_matrix() {
+		echo "<div id='category_table'>\n\n";
+		echo "<table class='centralise'>";
+		echo "<tr><td><strong>Post Category</strong></td><td><strong>Number of Comments</strong></td><td><strong>Number of Posts</td></strong></tr>\n";
+		foreach ( $this->segment_data as $author_key => $each_author ) {
+			$this->render_category_matrix_row( $author_key );
+		}
+		echo "</table>\n\n";
+		echo "</div>\n\n";
+	}
 
-        // Get a list of all category ids.
-        $getCategoryIdsSql = "SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy='category'";
-        $categoryIds = $wpdb->get_results($getCategoryIdsSql, ARRAY_A);
+	public function populate_category_matrix( $remarks_post_matrix ) {
+		global $wpdb;
+		$category_count_matrix = array();
 
-        // Initiate their entry in the matrix to have 0.
-        foreach($categoryIds as $categoryId){
-          $categoryCountMatrix[$categoryId['term_taxonomy_id']] = array('numPosts' => 0, 'commentCount' => 0);
-        }
+		// Get a list of all category ids.
+		$get_category_ids_sql = "SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy='category'";
+		$category_ids = $wpdb->get_results( $get_category_ids_sql, ARRAY_A );
 
-        // Get a list of how many posts per category.
-        foreach($remarksPostMatrix as $remarksPost) {
-          foreach ($remarksPost['categories'] as $categoryIndex) {
-            if (array_key_exists($categoryIndex, $categoryCountMatrix)){
-              $categoryCountMatrix[$categoryIndex]['numPosts']++;
-              $categoryCountMatrix[$categoryIndex]['commentCount'] +=  $remarksPost['count'];
-            }
-          }
-        }
+		// Initiate their entry in the matrix to have 0.
+		foreach ( $category_ids as $category_id ) {
+			$category_count_matrix[$category_id['term_taxonomy_id']] = array('num_posts' => 0, 'commentCount' => 0);
+		}
 
-        // Fill in the segment data.
-        foreach ($categoryCountMatrix as $categoryIndex => $category) {
-          $getCategoryNameSql = "SELECT name FROM $wpdb->terms WHERE term_id = " . $categoryIndex;
-          $categoryName = $wpdb->get_results($getCategoryNameSql , ARRAY_A);
+		// Get a list of how many posts per category.
+		foreach ( $remarks_post_matrix as $remarks_post ) {
+			foreach ( $remarks_post['categories'] as $category_index ) {
+				if ( array_key_exists( $category_index, $category_count_matrix ) ) {
+					$category_count_matrix[$category_index]['num_posts'] ++;
+					$category_count_matrix[$category_index]['commentCount'] += $remarks_post['count'];
+				}
+			}
+		}
 
-          $this->segment_data[] = array('name' => $categoryName[0]['name'], 'count' => $category['commentCount'], 'id' => $categoryIndex, 'numPosts' => $category['numPosts']);
-        }
+		// Fill in the segment data.
+		foreach ( $category_count_matrix as $category_index => $category ) {
+			$get_category_name_sql = "SELECT name FROM $wpdb->terms WHERE term_id = " . $category_index;
+			$category_name = $wpdb->get_results( $get_category_name_sql, ARRAY_A );
 
-        usort($this->segment_data, 'self::reorder');
-    }
+			$this->segment_data[] = array('name' => $category_name[0]['name'], 'count' => $category['commentCount'], 'id' => $category_index, 'num_posts' => $category['num_posts']);
+		}
+
+		usort( $this->segment_data, 'self::reorder' );
+	}
+
 }
