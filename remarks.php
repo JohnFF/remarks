@@ -46,13 +46,14 @@ add_action( 'wp_set_comment_status', 'comment_changes', 10, 2 );
 
 /* include css and javascript */
 // register jquery and style on initialization
-wp_register_script( 'remarks_jquery', plugins_url( '/js/functionality.js', __FILE__ ), array('jquery'), '2.5.1' );
 
-wp_register_style( 'remarks_css', plugins_url( '/css/style.css', __FILE__ ), false, '1.0.0', 'all' );
+wp_register_style( 'remarks_css', plugins_url( '/css/style.css', __FILE__ ), false, '1.0.20', 'all' );
+wp_enqueue_style( 'remarks_css' );
 
+wp_register_script( 'remarks_jquery', plugins_url( '/js/functionality.js', __FILE__ ), array('jquery'), '2.5.11' );
 wp_enqueue_script( 'remarks_jquery' );
 
-wp_enqueue_style( 'remarks_css' );
+RemarksGlobe::setHeaders();
 /* end include css and javascript */
 
 function wrapper() {

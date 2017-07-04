@@ -187,13 +187,34 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 	function render_map_by_comments() {
 
 		// draw a map
-		echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
-		foreach ( $this->longlats as $long => $pair ) {
-			foreach ( $pair as $lat => $count ) {
-				echo "&markers=color:blue|label:$count|$lat,$long";
-			}
-		}
-		echo '&sensor=false"/><br/><br/>';
+//		echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
+//		foreach ( $this->longlats as $long => $pair ) {
+//			foreach ( $pair as $lat => $count ) {
+//				echo "&markers=color:blue|label:$count|$lat,$long";
+//			}
+//		}
+//		echo '&sensor=false"/><br/><br/>';
+
+		echo "<div id='geolocate_map'></div>";
+
+		echo "<script>
+			var loadMap = function() {
+
+				setTimeout(function(){
+					var map = L.map('geolocate_map').setView([0.0, 0.0], 1);
+
+					L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+						  attribution: 'Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>',
+						  maxZoom: 8,
+						  id: 'mapbox.streets'
+					}).addTo(map);
+				},1);
+
+				jQuery('#geolocate_button').unbind('mouseover', loadMap);
+			};
+
+			jQuery('#geolocate_button').mouseover(loadMap);
+		</script>";
 	}
 
 	public static function initialise_remarks_table() {
@@ -233,6 +254,14 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 
 	public function get_highest_stat() {
 		return $this->countries_top; // has been reordered so that highest is at the top.
+	}
+
+	public static function setHeaders() {
+		wp_register_style( 'leaflet_css', 'https://unpkg.com/leaflet@1.1.0/dist/leaflet.css', false, '1.0.20', 'all' );
+		wp_enqueue_style( 'leaflet_css' );
+
+		wp_register_script( 'leaflet_js', 'https://unpkg.com/leaflet@1.1.0/dist/leaflet.js', array('jquery'), '2.5.9' );
+		wp_enqueue_script( 'leaflet_js' );
 	}
 
 }
