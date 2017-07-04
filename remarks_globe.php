@@ -2,6 +2,8 @@
 
 class RemarksGlobe { // For common functionality, although there isn't much.
 
+	const MAP_MAX_ZOOM = 8;
+
 	private $longlats;
 	private $countries;
 	private $countries_top;
@@ -184,31 +186,38 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 		echo "\n</table>\n";
 	}
 
-	function render_map_by_comments() {
-
-		// draw a map
-//		echo'<img id="geolocate_map" alt="Comments by Geolocation" src="http://maps.google.com/maps/api/staticmap?center=0,0&zoom=1&size=500x360';
-//		foreach ( $this->longlats as $long => $pair ) {
-//			foreach ( $pair as $lat => $count ) {
-//				echo "&markers=color:blue|label:$count|$lat,$long";
-//			}
-//		}
-//		echo '&sensor=false"/><br/><br/>';
-
+	function render_map() {
 		echo "<div id='geolocate_map'></div>";
 
 		echo "<script>
 			var loadMap = function() {
 
+				// Add map on a timeout: otherwise tiles don't render.
 				setTimeout(function(){
 					var map = L.map('geolocate_map').setView([0.0, 0.0], 1);
 
 					L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 						  attribution: 'Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>',
-						  maxZoom: 8,
+						  maxZoom: " . self::MAP_MAX_ZOOM . ",
 						  id: 'mapbox.streets'
-					}).addTo(map);
-				},1);
+					}).addTo(map);";
+
+					// Add markers.
+					foreach ($this->longlats as $eachLongitude => $eachLongitudeArray) {
+						foreach ($eachLongitudeArray as $eachLatitude => $commentsCount) {
+							if ($eachLongitude == 0.0 AND $eachLatitude == 0.0) {
+								continue;
+							}
+
+							$popup_string = $commentsCount . ($commentsCount == 1 ? ' comment.' : ' comments.');
+
+							echo "marker = new L.marker([" . $eachLatitude . "," . $eachLongitude . "])
+								.bindPopup('$popup_string')
+								.addTo(map);";
+						}
+					}
+
+				echo "},1);
 
 				jQuery('#geolocate_button').unbind('mouseover', loadMap);
 			};
@@ -225,13 +234,13 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 		$table_name = $wpdb->prefix . "remarks_comments";
 
 		$sql = "CREATE TABLE " . $table_name . " (
-	  comment_id mediumint(9) NOT NULL,
-	  city text NOT NULL,
-	  country text NOT NULL,
-	  latitude decimal(10,6) NOT NULL,
-	  longitude decimal(10,6) NOT NULL,
-	  UNIQUE KEY comment_id (comment_id)
-	);";
+			comment_id mediumint(9) NOT NULL,
+			city text NOT NULL,
+			country text NOT NULL,
+			latitude decimal(10,6) NOT NULL,
+			longitude decimal(10,6) NOT NULL,
+			UNIQUE KEY comment_id (comment_id)
+		);";
 
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
@@ -240,16 +249,16 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 
 	public function render() {
 		echo "<div id='geolocate_div' class='startHidden'>
-    <div id='geolocate_table_div'>";
+		<div id='geolocate_table_div'>";
 		$this->render_geolocation_comments_table();
 		echo "</div>
-    <div id='geolocate_map_div'>";
-		$this->render_map_by_comments();
+		<div id='geolocate_map_div'>";
+		$this->render_map();
 		echo "</div><br/>
-<em>Geolocation powered by <a href='http://www.freegeoip.net/'>FreeGeoIP</a>.</em><br/>
-<em>Map powered by <a href='http://lmgtfy.com/?q=google+map+api'>Google Map API</a>.</em><br/>
-<em>Unfortunately, the above map may be missing the locations of some of your comments. This is because sometimes it's impossible to translate the IP address into a geographic location.</em>
-</div>";
+		<em>Geolocation powered by <a href='http://www.freegeoip.net/'>FreeGeoIP</a>.</em><br/>
+		<em>Map powered by <a href='http://lmgtfy.com/?q=google+map+api'>Google Map API</a>.</em><br/>
+		<em>Unfortunately, the above map may be missing the locations of some of your comments. This is because sometimes it's impossible to translate the IP address into a geographic location.</em>
+		</div>";
 	}
 
 	public function get_highest_stat() {
