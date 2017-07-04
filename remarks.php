@@ -4,7 +4,7 @@
   Plugin Name: Remarks
   Plugin URI: http://www.civifirst.com
   Description: Analyse the number of comments you get by post, category, author, and location. Uses charts and maps!
-  Version: 4.1
+  Version: 4.2
   Author: CiviFirst John
   Author URI: http://www.civifirst.com
   License: GPL2

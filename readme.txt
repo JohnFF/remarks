@@ -4,7 +4,7 @@ Donate link: http://kiva.com
 Tags: comments, comments analysis, comments review, popular, remarks, meta, metrics, information, analysis, geolocation, geomapping, comment locations, comment geolocations, community, targetting, discussion, feedback, map, demographics
 Requires at least: 3.1.1
 Tested up to: 4.2.4
-Stable tag: 4.1
+Stable tag: 4.2
 
 Analysis of your site's comments, showing which posts, authors, and categories generate the most discussion with tables, charts, and geolocation.
 
