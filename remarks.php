@@ -92,6 +92,7 @@ function remarks_main() {
 	$categoriesSection = new RemarksCategories( $postsSection->get_posts() );
 	$authorsSection = new RemarksAuthors( $postsSection->get_posts() );
 	$globeSection = new RemarksGlobe();
+
 	$overviewSection = new RemarksOverview(
 			$total_approved_comments, 
 			$postsSection->get_highest_stat(),

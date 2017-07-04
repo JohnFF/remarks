@@ -14,7 +14,7 @@ class RemarksGlobe { // For common functionality, although there isn't much.
 	public function __construct() {
 		$this->longlats = array();
 		$this->countries = array();
-		$this->countries_top = array();
+		$this->countries_top = array('label' => '', 'count' => 0);
 
 		self::initialise_remarks_table();
 		$this->populate_city_by_comments();

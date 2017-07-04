@@ -3,17 +3,17 @@
 class RemarksOverview {
 
   private $total_comments;
-  private $postsHighestStat;
-  private $categoryHighestStat;
-  private $authorHighestStat;
-  private $countriesHighestStat;
+  private $posts_highest_stat;
+  private $category_highest_stat;
+  private $author_highest_stat;
+  private $countries_highest_stat;
 
-  function __construct($total_comments, $postsHighestStat, $categoryHighestStat, $authorHighestStat, $countriesHighestStat) {
+  function __construct($total_comments, $posts_highest_stat, $category_highest_stat, $author_highest_stat, $countries_highest_stat) {
     $this->total_comments = $total_comments;
-    $this->postsHighestStat = $postsHighestStat;
-    $this->categoryHighestStat = $categoryHighestStat;
-    $this->authorHighestStat = $authorHighestStat;
-    $this->countriesHighestStat = $countriesHighestStat;
+    $this->posts_highest_stat = $posts_highest_stat;
+    $this->category_highest_stat = $category_highest_stat;
+    $this->author_highest_stat = $author_highest_stat;
+    $this->countries_highest_stat = $countries_highest_stat;
   }
 
   function render() {
@@ -29,21 +29,21 @@ class RemarksOverview {
       <h5>Most commented Post:</h5>
       <br/>";
 
-    echo $this->postsHighestStat['name']." (".$this->postsHighestStat['count'].")";
+    echo $this->posts_highest_stat['name'] . " (" . $this->posts_highest_stat['count'] . ")";
 
     echo "<br/>";
     echo "<br/>";
 
     echo "<h5>Most commented Category:</h5>";
     echo "<br/>";
-    echo $this->categoryHighestStat['name'] . " (".$this->categoryHighestStat['count'] .")";
+    echo $this->category_highest_stat['name'] . " (".$this->category_highest_stat['count'] .")";
 
     echo "<br/>";
     echo "<br/>";
     echo "<h5>Most commented Author:</h5>";
     echo "<br/>";
 
-    echo $this->authorHighestStat['name'] . " (".$this->authorHighestStat['count'] .")";
+    echo $this->author_highest_stat['name'] . " (".$this->author_highest_stat['count'] . ")";
 
     echo "<br/>";
     echo "<br/>";
@@ -52,7 +52,7 @@ class RemarksOverview {
     echo "<h5>Origin of most comments:</h5>";
     echo "<br/>";
 
-    echo $this->remarks_countries_top['label'] . " (" . $this->remarks_countries_top['count'].")";
+    echo $this->countries_highest_stat['label'] . " (" . $this->countries_highest_stat['count'] . ")";
 
     echo "<br/>";
     echo "<br/>";
